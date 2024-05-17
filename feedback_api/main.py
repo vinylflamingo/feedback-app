@@ -105,6 +105,11 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_user(db=db, user=user)
 
+# Post new suggestions
+@app.post("/suggestions/", response_model=schemas.Suggestion, dependencies=[Depends(oauth2_scheme)])
+def create_suggestion(suggestion: schemas.SuggestionCreate, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    current_user = get_current_user(db=db, token=token)
+    return crud.create_suggestion(db=db, suggestion=suggestion, user_id=current_user.id)
 
 # Get all suggestions
 @app.get("/suggestions/", response_model=List[schemas.Suggestion], dependencies=[Depends(oauth2_scheme)])
