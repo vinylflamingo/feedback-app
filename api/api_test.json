@@ -1,0 +1,452 @@
+{
+	"info": {
+		"_postman_id": "a0e54bdc-d57b-4f9b-b2d2-6bb68a9e28b5",
+		"name": "Feedback API Testing Suite",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"testuser\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"User\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/users/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "testuser"
+						},
+						{
+							"key": "password",
+							"value": "password123"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/token",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"access_token\", jsonData.access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Create Suggestion",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Suggestion {{index}}\",\n  \"detail\": \"Detail for suggestion {{index}}\",\n  \"category\": \"Feature\",\n  \"status\": \"In Progress\",\n  \"completed\": false\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/suggestions/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"suggestions"
+					]
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"var suggestionIds = pm.environment.get(\"suggestion_ids\") ? JSON.parse(pm.environment.get(\"suggestion_ids\")) : [];",
+							"suggestionIds.push(jsonData.id);",
+							"pm.environment.set(\"suggestion_ids\", JSON.stringify(suggestionIds));",
+							"",
+							"var index = parseInt(pm.environment.get(\"index\")) + 1;",
+							"pm.environment.set(\"index\", index);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var index = pm.environment.get(\"index\") || 1;",
+							"pm.environment.set(\"index\", index);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Read Suggestions by Category",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/suggestions/category/Feature",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"suggestions",
+						"category",
+						"Feature"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read Suggestions by Status",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/suggestions/status/In Progress",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"suggestions",
+						"status",
+						"In Progress"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Suggestion",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"status\": \"Completed\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/suggestions/{{suggestion_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"suggestions",
+						"{{suggestion_id}}"
+					]
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var suggestionIds = JSON.parse(pm.environment.get(\"suggestion_ids\"));",
+							"var suggestionId = suggestionIds.pop();",
+							"pm.environment.set(\"suggestion_id\", suggestionId);",
+							"pm.environment.set(\"suggestion_ids\", JSON.stringify(suggestionIds));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Add Comment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"text\": \"This is a comment on suggestion {{suggestion_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/suggestions/{{suggestion_id}}/comments/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"suggestions",
+						"{{suggestion_id}}",
+						"comments"
+					]
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"var commentIds = pm.environment.get(\"comment_ids\") ? JSON.parse(pm.environment.get(\"comment_ids\")) : [];",
+							"commentIds.push(jsonData.id);",
+							"pm.environment.set(\"comment_ids\", JSON.stringify(commentIds));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var suggestionIds = JSON.parse(pm.environment.get(\"suggestion_ids\"));",
+							"var randomSuggestionId = suggestionIds[Math.floor(Math.random() * suggestionIds.length)];",
+							"pm.environment.set(\"suggestion_id\", randomSuggestionId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Add Child Comment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"text\": \"This is a child comment on comment {{comment_id}}\",\n  \"parent_comment_id\": \"{{comment_id}}\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/suggestions/{{suggestion_id}}/comments/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"suggestions",
+						"{{suggestion_id}}",
+						"comments"
+					]
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var commentIds = JSON.parse(pm.environment.get(\"comment_ids\"));",
+							"var randomCommentId = commentIds[Math.floor(Math.random() * commentIds.length)];",
+							"pm.environment.set(\"comment_id\", randomCommentId);",
+							"",
+							"var suggestionIds = JSON.parse(pm.environment.get(\"suggestion_ids\"));",
+							"var randomSuggestionId = suggestionIds[Math.floor(Math.random() * suggestionIds.length)];",
+							"pm.environment.set(\"suggestion_id\", randomSuggestionId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Read Comments by Suggestion",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/suggestions/{{suggestion_id}}/comments/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"suggestions",
+						"{{suggestion_id}}",
+						"comments"
+					]
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var suggestionIds = JSON.parse(pm.environment.get(\"suggestion_ids\"));",
+							"var randomSuggestionId = suggestionIds[Math.floor(Math.random() * suggestionIds.length)];",
+							"pm.environment.set(\"suggestion_id\", randomSuggestionId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Upvote Suggestion",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/suggestions/{{suggestion_id}}/upvote/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"suggestions",
+						"{{suggestion_id}}",
+						"upvote"
+					]
+				}
+			},
+			"response": [],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var suggestionIds = JSON.parse(pm.environment.get(\"suggestion_ids\"));",
+							"var randomSuggestionId = suggestionIds[Math.floor(Math.random() * suggestionIds.length)];",
+							"pm.environment.set(\"suggestion_id\", randomSuggestionId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			]
+		},
+		{
+			"name": "Read Top Suggestions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/suggestions/top/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"suggestions",
+						"top"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read All Suggestions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/suggestions/",				
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "suggestions"
+                    ]
+                }
+            },
+            "response": []
+        }
+    ]
+}

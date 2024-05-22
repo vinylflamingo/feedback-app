@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from feedback_api import models, schemas, crud, database
-from feedback_api.database import engine, SessionLocal
+from src import models, schemas, crud, database
+from src.database import engine, SessionLocal
 from passlib.context import CryptContext
-from feedback_api.auth import authenticate_user, create_access_token, get_current_user
+from src.auth import authenticate_user, create_access_token, get_current_user
 from datetime import timedelta
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import os
@@ -173,3 +173,11 @@ def read_comments_by_suggestion(suggestion_id: int, db: Session = Depends(get_db
     current_user = get_current_user(db=db, token=token)
     comments = crud.get_comments_by_suggestion(db, suggestion_id=suggestion_id)
     return comments
+
+# Submit an comment
+@app.post("/suggestions/{suggestion_id}/comments/", response_model=schemas.Comment, dependencies=[Depends(oauth2_scheme)])
+def create_comment(comment: schemas.CommentCreate, suggestion_id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    current_user = get_current_user(db=db, token=token)
+    comment = crud.create_comment(db=db, comment=comment, suggestion_id=suggestion_id, user_id=current_user.id)
+    return comment
+

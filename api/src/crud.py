@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from feedback_api import models, schemas
+from src import models, schemas
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
@@ -9,7 +9,7 @@ def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
 def create_user(db: Session, user: schemas.UserCreate):
-    db_user = models.User(name=user.name, email=user.email)
+    db_user = models.User(**user.model_dump())
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -22,7 +22,7 @@ def get_suggestions(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Suggestion).offset(skip).limit(limit).all()
 
 def create_suggestion(db: Session, suggestion: schemas.SuggestionCreate, user_id: int):
-    db_suggestion = models.Suggestion(**suggestion.dict(), owner_id=user_id)
+    db_suggestion = models.Suggestion(**suggestion.model_dump(), owner_id=user_id)
     db.add(db_suggestion)
     db.commit()
     db.refresh(db_suggestion)
@@ -32,14 +32,14 @@ def update_suggestion(db: Session, suggestion_id: int, suggestion_update: schema
     db_suggestion = db.query(models.Suggestion).filter(models.Suggestion.id == suggestion_id).first()
     if not db_suggestion:
         return None
-    for key, value in suggestion_update.dict(exclude_unset=True).items():
+    for key, value in suggestion_update.model_dump(exclude_unset=True).items():
         setattr(db_suggestion, key, value)
     db.commit()
     db.refresh(db_suggestion)
     return db_suggestion
 
-def create_comment(db: Session, comment: schemas.CommentCreate, feedback_id: int, user_id: int):
-    db_comment = models.Comment(**comment.dict(), feedback_id=feedback_id, user_id=user_id)
+def create_comment(db: Session, comment: schemas.CommentCreate, suggestion_id: int, user_id: int):
+    db_comment = models.Comment(**comment.model_dump(), suggestion_id=suggestion_id, user_id=user_id)
     db.add(db_comment)
     db.commit()
     db.refresh(db_comment)

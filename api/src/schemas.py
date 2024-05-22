@@ -12,12 +12,10 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: Optional[str] = None
 
-from pydantic import BaseModel
-from datetime import datetime
-from typing import List, Optional
 
 class CommentBase(BaseModel):
     text: str
+    parent_comment_id: Optional[int] = None
 
 class CommentCreate(CommentBase):
     pass
@@ -26,7 +24,6 @@ class Comment(CommentBase):
     id: int
     suggestion_id: int
     user_id: int
-    parent_comment_id: Optional[int] = None
     created_at: datetime
     children: List['Comment'] = []
 
