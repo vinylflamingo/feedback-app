@@ -1,5 +1,5 @@
-# crud.py
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from feedback_api import models, schemas
 
 def get_user(db: Session, user_id: int):
@@ -28,8 +28,18 @@ def create_suggestion(db: Session, suggestion: schemas.SuggestionCreate, user_id
     db.refresh(db_suggestion)
     return db_suggestion
 
+def update_suggestion(db: Session, suggestion_id: int, suggestion_update: schemas.SuggestionUpdate):
+    db_suggestion = db.query(models.Suggestion).filter(models.Suggestion.id == suggestion_id).first()
+    if not db_suggestion:
+        return None
+    for key, value in suggestion_update.dict(exclude_unset=True).items():
+        setattr(db_suggestion, key, value)
+    db.commit()
+    db.refresh(db_suggestion)
+    return db_suggestion
+
 def create_comment(db: Session, comment: schemas.CommentCreate, feedback_id: int, user_id: int):
-    db_comment = models.Comment(**comment.dict(), feedback_id=feedback_id, comment=comment, user_id = user_id)
+    db_comment = models.Comment(**comment.dict(), feedback_id=feedback_id, user_id=user_id)
     db.add(db_comment)
     db.commit()
     db.refresh(db_comment)
@@ -59,7 +69,22 @@ def submit_upvote(db: Session, suggestion_id: int, user_id: int):
     return upvote
 
 def get_top_suggestions(db: Session, limit: int = 10):
-    return db.query(models.Suggestion).order_by(models.Suggestion.upvotes.desc()).limit(limit).all()
+    subquery = (
+        db.query(models.Upvote.suggestion_id, func.count(models.Upvote.id).label("upvote_count"))
+        .filter(models.Upvote.active == True)
+        .group_by(models.Upvote.suggestion_id)
+        .subquery()
+    )
+
+    suggestions = (
+        db.query(models.Suggestion, subquery.c.upvote_count)
+        .outerjoin(subquery, models.Suggestion.id == subquery.c.suggestion_id)
+        .order_by(subquery.c.upvote_count.desc())
+        .limit(limit)
+        .all()
+    )
+
+    return [suggestion for suggestion, _ in suggestions]
 
 def toggle_upvote(db: Session, suggestion_id: int, user_id: int):
     upvote = db.query(models.Upvote).filter(models.Upvote.suggestion_id == suggestion_id, models.Upvote.user_id == user_id).first()

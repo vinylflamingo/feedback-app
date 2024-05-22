@@ -111,6 +111,20 @@ def create_suggestion(suggestion: schemas.SuggestionCreate, db: Session = Depend
     current_user = get_current_user(db=db, token=token)
     return crud.create_suggestion(db=db, suggestion=suggestion, user_id=current_user.id)
 
+# Edit existing suggestions
+@app.put("/suggestions/{suggestion_id}", response_model=schemas.Suggestion, dependencies=[Depends(oauth2_scheme)])
+def update_suggestion(suggestion_id: int, suggestion: schemas.SuggestionUpdate, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    current_user = get_current_user(db=db, token=token)
+    db_suggestion = crud.get_suggestion(db, suggestion_id=suggestion_id)
+    if not db_suggestion:
+        raise HTTPException(status_code=404, detail="Suggestion not found")
+    if db_suggestion.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this suggestion")
+    updated_suggestion = crud.update_suggestion(db, suggestion_id=suggestion_id, suggestion_update=suggestion)
+    if not updated_suggestion:
+        raise HTTPException(status_code=404, detail="Suggestion not found")
+    return updated_suggestion
+
 # Get all suggestions
 @app.get("/suggestions/", response_model=List[schemas.Suggestion], dependencies=[Depends(oauth2_scheme)])
 def read_suggestions(skip: int = 0, limit: int = 10, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):

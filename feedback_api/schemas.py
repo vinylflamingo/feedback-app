@@ -43,11 +43,22 @@ class SuggestionBase(BaseModel):
 class SuggestionCreate(SuggestionBase):
     pass
 
+class SuggestionUpdate(BaseModel):
+    title: Optional[str] = None
+    detail: Optional[str] = None
+    category: Optional[str] = None
+    status: Optional[str] = None
+    completed: Optional[bool] = None
+
+    class Config:
+        orm_mode = True
+
 class Suggestion(SuggestionBase):
     id: int
     owner_id: int
     comments: List[Comment] = []
-
+    upvote_count: int
+    
     class Config:
         orm_mode = True
 

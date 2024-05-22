@@ -32,6 +32,10 @@ class Suggestion(Base):
     comments = relationship("Comment", back_populates="suggestion")
     upvotes = relationship("Upvote", back_populates="suggestion")
 
+    @property
+    def upvote_count(self):
+        return len([upvote for upvote in self.upvotes if upvote.active])
+
 class Upvote(Base):
     __tablename__ = 'upvotes'
     id = Column(Integer, primary_key=True, index=True)
