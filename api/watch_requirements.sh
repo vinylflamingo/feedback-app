@@ -1,25 +1,25 @@
 #!/bin/bash
 
-# Function to handle errors
-error_handler() {
-  echo "Error occurred in script at line: ${BASH_LINENO[0]}"
-  echo "Script executed from: ${PWD}"
-  exit 1
+# Function to start the FastAPI app
+start_uvicorn() {
+  uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload &
+  UVICORN_PID=$!
 }
 
-# Trap errors and call the error_handler function
-trap 'error_handler' ERR
-
-echo "Script executed from: ${PWD}"
-
 # Start the FastAPI app initially
-uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload &
+start_uvicorn
 
-# Watch for changes to requirements.txt
+# Watch for changes to requirements.txt only
 while inotifywait -e modify /api/requirements.txt; do
   echo "requirements.txt modified, updating packages..."
   /api/update_packages.sh
-done
 
-# Keep the container alive for 30 minutes for debugging
-sleep 30m
+  # Stop the current Uvicorn instance
+  kill $UVICORN_PID
+
+  # Wait for a moment to ensure the port is released
+  sleep 2
+
+  # Restart the FastAPI app to apply changes
+  start_uvicorn
+done

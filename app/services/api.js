@@ -11,7 +11,8 @@ export default {
   async login(username, password) {
     try {
       console.log("calling api....");
-      const response = await apiClient.post('/token', { username, password });
+      const data = qs.stringify({ username, password });
+      const response = await apiClient.post('/token', data);
       console.log("API response:", response.data);
       return response.data;
     } catch (error) {
