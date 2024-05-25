@@ -3,7 +3,7 @@
       <h1>Authentication successful.</h1>
     </div>
     <div v-else>
-      <Base :apiCall="formType">
+      <Base :apiCall="formType" formId="base-form">
         <Login />
       </Base>
     </div>

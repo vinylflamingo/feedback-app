@@ -9,9 +9,9 @@
             :name="props.fieldName" 
             :id="props.fieldName" 
         >
-            <option v-for="item in getOptions">
-                {{ item.message }}
-            </option>
+            <option v-for="item in options">
+                {{ item }}
+            </option> 
 
 
         </select>
@@ -32,31 +32,11 @@
     fieldName: string,
     labelText: string,
     description?: string | null,
-    options: string,
+    options: string[],
   }
   
   const props = defineProps<DropdownFieldElementProps>();
 
-
-  const getOptions = (props) => {
-    const options = [];
-    switch (props.options) {
-        case CATEGORY:
-            for (const value of Object.values(Category)) {
-                options.push(value)
-                console.log(value);
-            }
-            return options;
-    
-        case STATUS:
-            for (const value of Object.values(Status)) {
-                options.push(value)
-                console.log(value);
-            }
-            return options;
-    }
-
-  }
 
 
 

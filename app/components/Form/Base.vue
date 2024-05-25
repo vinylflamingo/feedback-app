@@ -6,6 +6,7 @@
 </template>
 
 <script setup lang="ts">
+console.log("base.vue mounted")
 import { type ApiFunction } from '@/constants/constants';
 import { defineProps, withDefaults } from 'vue';
 
@@ -19,14 +20,10 @@ const props = withDefaults(defineProps<FormComponentProps>(), {
 });
 
 const handleSubmit = async (props: FormComponentProps) => {
-  console.log("props", props);
-
-  console.log("handleSubmit Called.")
+  console.log("Form Submitted with props:", props);
   const formData: Record<string, any> = {};
 
-  console.log("empty form data = ", formData)
   const formElements = (document.querySelector(`#${props.formId}`) as HTMLFormElement).elements;
-  console.log("Form Elements", formElements)
 
   for (const element of Array.from(formElements)) {
     const inputElement = element as HTMLInputElement;
@@ -35,12 +32,13 @@ const handleSubmit = async (props: FormComponentProps) => {
     }
   }
 
-  console.log("Form Data", formData)
+  console.log("Collected Form Data before API call:", formData)
 
   try {
     await props.apiCall(formData);
+    console.log("API call successful with data:", formData);
   } catch (error) {
-    console.error('API call failed:', error);
+    console.error('API call failed with error:', error);
   }
 };
 </script>

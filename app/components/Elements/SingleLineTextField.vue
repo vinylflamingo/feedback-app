@@ -23,14 +23,14 @@
 import { ref, defineProps, watch } from 'vue';
 import { FormTextTypes } from '@/constants/enums';
 
-interface TextFieldElementProps {
+interface SingleLineTextFieldElementProps {
   fieldName: string;
   labelText: string;
   inputType: string;
   description?: string | null;
 }
 
-const props = defineProps<TextFieldElementProps>();
+const props = defineProps<SingleLineTextFieldElementProps>();
 const input = ref('');
 const validationMessage = ref<string>('');
 

@@ -6,8 +6,6 @@ import { useCookie, type CookieRef } from '#app';
 
 interface Api {
   login(formData: Record<string, any>): Promise<void>;
-  add(formData: Record<string, any>): Promise<void>;
-  edit(formData: Record<string, any>): Promise<void>;
   createUser(formData: Record<string, any>): Promise<void>;
   createSuggestion(formData: Record<string, any>): Promise<void>;
   readSuggestionsByCategory(category: string): Promise<any>;
@@ -47,7 +45,6 @@ let TOKEN_COOKIE: string = "1023n1212lno12oi12pubd012ud09n12ud90u21d9u12du1n2dn0
 
 const api: Api = {
   apiClient: {} as AxiosInstance,
-  
 
   async login(formData: Record<string, any>): Promise<void> {
     const authStore = useAuthStore();
@@ -58,20 +55,13 @@ const api: Api = {
       console.log(response);
       const token = response.data.access_token;
       authStore.setToken(token);
-      tokenCookie.value = token // Set cookie
+      tokenCookie.value = token; // Set cookie
       setAuthToken(token);
     } catch (error: any) {
       console.log(error);
       handleErrors(error);
       throw new Error('Failed to log in');
     }
-  },
-  async add(formData: Record<string, any>): Promise<void> {
-    console.log("Create New API called with", formData);
-  },
-
-  async edit(formData: Record<string, any>): Promise<void> {
-    console.log("Edit API called with", formData);
   },
 
   async createUser(formData: Record<string, any>): Promise<void> {
@@ -85,10 +75,45 @@ const api: Api = {
 
   async createSuggestion(formData: Record<string, any>): Promise<void> {
     try {
+      console.log( "Create Suggestion called with data: ", formData)
+      formData.status = 'New';
+      formData.completed = false;
+      console.log( "Appended static fields for create new. ", formData)
+
+
       await apiClient.post('/suggestions', formData);
     } catch (error: any) {
       handleErrors(error);
       throw new Error('Failed to create suggestion');
+    }
+  },
+
+  async updateSuggestion(suggestionId: string, formData: Record<string, any>): Promise<void> {
+    try {
+      await apiClient.put(`/suggestions/${suggestionId}`, formData);
+    } catch (error: any) {
+      handleErrors(error);
+      throw new Error('Failed to update suggestion');
+    }
+  },
+
+  async readTopSuggestions(): Promise<any> {
+    try {
+      const response = await apiClient.get('/suggestions/top');
+      return response.data;
+    } catch (error: any) {
+      handleErrors(error);
+      throw new Error('Failed to read top suggestions');
+    }
+  },
+
+  async readAllSuggestions(): Promise<any> {
+    try {
+      const response = await apiClient.get('/suggestions');
+      return response.data;
+    } catch (error: any) {
+      handleErrors(error);
+      throw new Error('Failed to read all suggestions');
     }
   },
 
@@ -109,15 +134,6 @@ const api: Api = {
     } catch (error: any) {
       handleErrors(error);
       throw new Error('Failed to read suggestions by status');
-    }
-  },
-
-  async updateSuggestion(suggestionId: string, formData: Record<string, any>): Promise<void> {
-    try {
-      await apiClient.put(`/suggestions/${suggestionId}`, formData);
-    } catch (error: any) {
-      handleErrors(error);
-      throw new Error('Failed to update suggestion');
     }
   },
 
@@ -155,26 +171,6 @@ const api: Api = {
     } catch (error: any) {
       handleErrors(error);
       throw new Error('Failed to upvote suggestion');
-    }
-  },
-
-  async readTopSuggestions(): Promise<any> {
-    try {
-      const response = await apiClient.get('/suggestions/top');
-      return response.data;
-    } catch (error: any) {
-      handleErrors(error);
-      throw new Error('Failed to read top suggestions');
-    }
-  },
-
-  async readAllSuggestions(): Promise<any> {
-    try {
-      const response = await apiClient.get('/suggestions');
-      return response.data;
-    } catch (error: any) {
-      handleErrors(error);
-      throw new Error('Failed to read all suggestions');
     }
   },
 };

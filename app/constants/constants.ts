@@ -15,11 +15,11 @@ export const USER_API_CALLS: Record<UserApi, ApiFunction> = {
 
 export const SUGGESTION_API_CALLS: Record<SuggestionApi, ApiFunction> = {
   [SuggestionApi.CREATE_SUGGESTION]: api.createSuggestion,
-  [SuggestionApi.READ_BY_CATEGORY]: api.readSuggestionsByCategory,
-  [SuggestionApi.READ_BY_STATUS]: api.readSuggestionsByStatus,
   [SuggestionApi.UPDATE_SUGGESTION]: api.updateSuggestion,
   [SuggestionApi.READ_TOP]: api.readTopSuggestions,
   [SuggestionApi.READ_ALL]: api.readAllSuggestions,
+  [SuggestionApi.READ_BY_CATEGORY]: api.readSuggestionsByCategory,
+  [SuggestionApi.READ_BY_STATUS]: api.readSuggestionsByStatus,
 };
 
 export const COMMENT_API_CALLS: Record<CommentApi, ApiFunction> = {
