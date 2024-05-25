@@ -1,13 +1,12 @@
-// composables/useAuth.js
 import { computed } from 'vue';
-import { useAuthStore } from '../store/auth'
+import { useAuthStore } from '../store/auth';
 
 export function useAuth() {
   const authStore = useAuthStore();
 
   const isAuthenticated = computed(() => !!authStore.token);
 
-  const login = (token) => {
+  const login = (token: string) => {
     authStore.setToken(token);
   };
 
