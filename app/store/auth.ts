@@ -2,25 +2,31 @@
 import { defineStore } from 'pinia'
 
 interface AuthState {
-  token: string | null,
-  user: string | null,
+  token: string | null;
+  tokenExpiration: Date | null;
 }
 
-export const useAuthStore = defineStore({
-  id: 'auth',
+export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     token: null,
-    user: null,
+    tokenExpiration: null as Date | null,
   }),
   getters: {
     isAuthenticated: (state: AuthState) => !!state.token,
   },
   actions: {
-    setToken(token: string) {
+    setToken(token: string | null) {
       this.token = token
     },
     clearToken() {
       this.token = null
+      this.tokenExpiration = null
     },
+    setTokenExpiration(expiration: Date | null) {
+      this.tokenExpiration = expiration;
+    },
+    getTokenExpiration() {
+      return this.tokenExpiration;
+    }
   },
 })

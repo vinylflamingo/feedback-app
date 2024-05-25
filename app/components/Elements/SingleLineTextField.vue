@@ -1,7 +1,7 @@
 <template>
   <div>
     <label :for="props.fieldName">{{ props.labelText }}</label>
-    <div v-if="description">
+    <div v-if="props.description">
       <small>{{ props.description }}</small>
     </div>
     <client-only>
@@ -9,8 +9,7 @@
         :name="props.fieldName" 
         :id="props.fieldName" 
         :type="props.inputType" 
-        :value="input" 
-        @input="updateInput"
+        v-model="input" 
       />
     </client-only>
     <div v-if="validationMessage" class="">
@@ -20,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, watch } from 'vue';
+import { ref, defineProps, onMounted } from 'vue';
 import { FormTextTypes } from '@/constants/enums';
 
 interface SingleLineTextFieldElementProps {
@@ -28,32 +27,30 @@ interface SingleLineTextFieldElementProps {
   labelText: string;
   inputType: string;
   description?: string | null;
+  defaultValue?: string | null; 
 }
 
 const props = defineProps<SingleLineTextFieldElementProps>();
 const input = ref('');
 const validationMessage = ref<string>('');
 
+// Initialize input value on mounted
+onMounted(() => {
+  input.value = props.defaultValue || '';
+});
 
-const updateInput = (event: Event) => {
-  input.value = (event.target as HTMLInputElement).value;
-  validateInput(props.inputType);
-
-};
-
-const validateInput = (inputType: string) => {
-  if (inputType === FormTextTypes.PASSWORD)
-  {
-    if (input.value.length > 0 && input.value.length < 4 ) {
+// Function to validate input
+const validateInput = (inputValue: string) => {
+  if (props.inputType === FormTextTypes.PASSWORD) {
+    if (inputValue.length > 0 && inputValue.length < 5) {
       validationMessage.value = 'Password must be at least 5 characters long.';
     } else {
       validationMessage.value = '';
     }
   }
-
-
-
 };
 
-watch(input, validateInput);
+watch(input, (newValue) => {
+  validateInput(newValue);
+}, { immediate: true });
 </script>

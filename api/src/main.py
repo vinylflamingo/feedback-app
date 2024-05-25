@@ -4,7 +4,7 @@ from typing import List
 from src import models, schemas, crud, database
 from src.database import engine, SessionLocal
 from passlib.context import CryptContext
-from src.auth import authenticate_user, create_access_token, get_current_user
+from src.auth import authenticate_user, create_access_token, get_current_user, verify_token
 from datetime import timedelta
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
@@ -107,6 +107,22 @@ def login_for_access_token(db: Session = Depends(get_db), form_data: OAuth2Passw
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+@app.post("/refresh_token", response_model=schemas.Token)
+async def refresh_token(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    current_user = verify_token(token, db)
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=60)
+    access_token = create_access_token(
+        data={"sub": current_user.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
 @app.get("/users/me/", response_model=schemas.User)
 async def read_users_me(current_user: models.User = Depends(get_current_user)):
     return current_user
@@ -123,6 +139,16 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 def create_suggestion(suggestion: schemas.SuggestionCreate, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
     current_user = get_current_user(db=db, token=token)
     return crud.create_suggestion(db=db, suggestion=suggestion, user_id=current_user.id)
+# Get single suggestion
+@app.get("/suggestions/{suggestion_id}", response_model=schemas.Suggestion)
+def read_suggestion(suggestion_id: int, db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+    current_user = get_current_user(db=db, token=token)
+    db_suggestion = crud.get_suggestion(db, suggestion_id=suggestion_id)
+    if not db_suggestion:
+        raise HTTPException(status_code=404, detail="Suggestion not found")
+    if db_suggestion.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to view this suggestion")
+    return db_suggestion
 
 # Edit existing suggestions
 @app.put("/suggestions/{suggestion_id}", response_model=schemas.Suggestion, dependencies=[Depends(oauth2_scheme)])

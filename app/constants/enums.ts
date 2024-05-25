@@ -21,6 +21,7 @@ export enum AuthApi {
 
 export enum SuggestionApi {
   CREATE_SUGGESTION = 'CREATE_SUGGESTION',
+  GET_SUGGESTION = 'GET_SUGGESTION',
   READ_BY_CATEGORY = 'READ_BY_CATEGORY',
   READ_BY_STATUS = 'READ_BY_STATUS',
   UPDATE_SUGGESTION = 'UPDATE_SUGGESTION',
@@ -55,4 +56,9 @@ export enum FormTextTypes {
 export enum FormDropDownOptions {
   CATEGORY = 'CATEGORY',
   STATUS = 'STATUS'
+}
+
+export enum AuthStatus {
+  Unauthorized, 
+  Authorized
 }

@@ -16,6 +16,7 @@ export const USER_API_CALLS: Record<UserApi, ApiFunction> = {
 export const SUGGESTION_API_CALLS: Record<SuggestionApi, ApiFunction> = {
   [SuggestionApi.CREATE_SUGGESTION]: api.createSuggestion,
   [SuggestionApi.UPDATE_SUGGESTION]: api.updateSuggestion,
+  [SuggestionApi.GET_SUGGESTION]: api.getSuggestion,
   [SuggestionApi.READ_TOP]: api.readTopSuggestions,
   [SuggestionApi.READ_ALL]: api.readAllSuggestions,
   [SuggestionApi.READ_BY_CATEGORY]: api.readSuggestionsByCategory,
