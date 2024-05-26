@@ -31,6 +31,8 @@ class Suggestion(Base):
     owner = relationship("User", back_populates="suggestions")
     comments = relationship("Comment", back_populates="suggestion")
     upvotes = relationship("Upvote", back_populates="suggestion")
+    archived = Column(Boolean, default=False) 
+
 
     @property
     def upvote_count(self):
@@ -57,3 +59,5 @@ class Comment(Base):
     user = relationship("User", back_populates="comments")
     parent_comment = relationship("Comment", remote_side=[id], back_populates="children")
     children = relationship("Comment", back_populates="parent_comment")
+    archived = Column(Boolean, default=False) 
+

@@ -216,7 +216,7 @@ const api: Api = {
 
   async readTopSuggestions(): Promise<any> {
     try {
-      const response = await apiClient.get('/suggestions/top');
+      const response = await apiClient.get('/top');
       return response.data;
     } catch (error: any) {
       handleErrors(error);

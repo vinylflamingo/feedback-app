@@ -3,14 +3,15 @@ export enum Category {
   FEATURE = 'Feature',
   BUG = 'Bug',
   ENHANCEMENT = 'Enhancement',
-  DOCUMENTATION = 'Documentation',
-  OTHER = 'Other',
+  UI = 'UI',
+  UX = 'UX'
 }
 
 export enum Status {
-  NEW = 'New',
+  SUGGESTION = 'Suggestion',
+  PLANNED = 'PLANNED',
   IN_PROGRESS = 'In Progress',
-  IN_REVIEW = 'In Review',
+  LIVE = 'LIVE',
   COMPLETED = 'Completed',
   ON_HOLD = 'On Hold',
 }
