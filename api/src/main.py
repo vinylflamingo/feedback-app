@@ -205,7 +205,10 @@ def update_suggestion(
             status_code=403, detail="Not authorized to update this suggestion"
         )
     updated_suggestion = crud.update_suggestion(
-        db, suggestion_id=suggestion_id, suggestion_update=suggestion
+        db,
+        suggestion_id=suggestion_id,
+        suggestion_update=suggestion,
+        current_user=current_user,
     )
     if not updated_suggestion:
         raise HTTPException(status_code=404, detail="Suggestion not found")

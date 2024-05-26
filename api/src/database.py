@@ -14,15 +14,27 @@ POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 POSTGRES_DB = os.getenv("POSTGRES_DB")
 POSTGRES_HOST = os.getenv("POSTGRES_HOST")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432") 
+POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
 
-db_url = "postgresql://" + POSTGRES_USER + ":"+ POSTGRES_PASSWORD + "@" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB
+db_url = (
+    "postgresql://"
+    + POSTGRES_USER
+    + ":"
+    + POSTGRES_PASSWORD
+    + "@"
+    + POSTGRES_HOST
+    + ":"
+    + POSTGRES_PORT
+    + "/"
+    + POSTGRES_DB
+)
 print(db_url)
 
 engine = create_engine(db_url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 def get_db():
     db = SessionLocal()
@@ -33,10 +45,10 @@ def get_db():
 
 
 def seed_data():
-    seed_file_path = os.path.join(os.path.dirname(__file__), '..', 'seed_data.json')
-    
+    seed_file_path = os.path.join(os.path.dirname(__file__), "..", "seed_data.json")
+
     try:
-        with open(seed_file_path, 'r') as file:
+        with open(seed_file_path, "r") as file:
             data = json.load(file)
     except FileNotFoundError:
         print(f"Error: {seed_file_path} not found.")
@@ -59,7 +71,8 @@ def seed_data():
                 password=pwd_context.hash("music sounds better with you"),
                 first_name="Admin",
                 last_name="User",
-                email="admin@example.com"
+                email="admin@example.com",
+                role="admin",
             )
             session.add(admin_user)
 
@@ -69,7 +82,7 @@ def seed_data():
                 password=pwd_context.hash("hello world"),
                 first_name="Demo",
                 last_name="User",
-                email="demo@example.com"
+                email="demo@example.com",
             )
             session.add(demo_user)
 
@@ -79,22 +92,27 @@ def seed_data():
                 password=pwd_context.hash("dev_password"),
                 first_name="Dev",
                 last_name="User",
-                email="dev@example.com"
+                email="dev@example.com",
+                role="admin",
             )
             session.add(dev_user)
 
         session.commit()
 
         # Add remaining users
-        for user_data in data['users']:
-            if user_data['username'] not in ["admin", "demo", "dev_user"]:
-                user_data['password'] = pwd_context.hash(user_data['password'])
-                if user_data['profile_picture'] is None:
-                    user_data['profile_picture'] = None
+        for user_data in data["users"]:
+            if user_data["username"] not in ["admin", "demo", "dev_user"]:
+                user_data["password"] = pwd_context.hash(user_data["password"])
+                if user_data["profile_picture"] is None:
+                    user_data["profile_picture"] = None
                 else:
-                    user_data['profile_picture'] = bytes(user_data['profile_picture'], 'utf-8')
-                
-                existing_user = session.query(User).filter(User.id == user_data['id']).first()
+                    user_data["profile_picture"] = bytes(
+                        user_data["profile_picture"], "utf-8"
+                    )
+
+                existing_user = (
+                    session.query(User).filter(User.id == user_data["id"]).first()
+                )
                 if existing_user:
                     print(f"Skipped user with ID {user_data['id']} - already exists.")
                 else:
@@ -105,20 +123,30 @@ def seed_data():
         session.commit()
 
         # Add suggestions
-        for suggestion_data in data['suggestions']:
-            existing_suggestion = session.query(Suggestion).filter(Suggestion.id == suggestion_data['id']).first()
+        for suggestion_data in data["suggestions"]:
+            existing_suggestion = (
+                session.query(Suggestion)
+                .filter(Suggestion.id == suggestion_data["id"])
+                .first()
+            )
             if existing_suggestion:
-                print(f"Skipped suggestion with ID {suggestion_data['id']} - already exists.")
+                print(
+                    f"Skipped suggestion with ID {suggestion_data['id']} - already exists."
+                )
             else:
                 suggestion = Suggestion(**suggestion_data)
                 session.add(suggestion)
-                print(f"Created suggestion with ID {suggestion_data['id']} - {suggestion.title}")
+                print(
+                    f"Created suggestion with ID {suggestion_data['id']} - {suggestion.title}"
+                )
 
         session.commit()
 
         # Add comments
-        for comment_data in data['comments']:
-            existing_comment = session.query(Comment).filter(Comment.id == comment_data['id']).first()
+        for comment_data in data["comments"]:
+            existing_comment = (
+                session.query(Comment).filter(Comment.id == comment_data["id"]).first()
+            )
             if existing_comment:
                 print(f"Skipped comment with ID {comment_data['id']} - already exists.")
             else:
@@ -129,14 +157,16 @@ def seed_data():
         session.commit()
 
         # Add upvotes
-        for upvote_data in data['upvotes']:
-            existing_upvote = session.query(Upvote).filter(Upvote.id == upvote_data['id']).first()
+        for upvote_data in data["upvotes"]:
+            existing_upvote = (
+                session.query(Upvote).filter(Upvote.id == upvote_data["id"]).first()
+            )
             if existing_upvote:
                 print(f"Skipped upvote with ID {upvote_data['id']} - already exists.")
             else:
                 upvote = Upvote(**upvote_data)
                 session.add(upvote)
-                print(f"Created upvotw with ID {upvote_data['id']} - {upvote.user_id}")
+                print(f"Created upvote with ID {upvote_data['id']} - {upvote.user_id}")
 
         session.commit()
 

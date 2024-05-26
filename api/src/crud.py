@@ -1,7 +1,9 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from src import models, schemas
 import os
+from . import models, schemas
+from .models import User
+
 
 DEFAULT_RESPONSE_LIMIT = int(
     10
@@ -122,20 +124,32 @@ def create_suggestion(db: Session, suggestion: schemas.SuggestionCreate, user_id
 
 
 def update_suggestion(
-    db: Session, suggestion_id: int, suggestion_update: schemas.SuggestionUpdate
+    db: Session,
+    suggestion_id: int,
+    suggestion_update: schemas.SuggestionUpdate,
+    current_user: User,
 ):
-    db_suggestion = (
-        db.query(models.Suggestion)
-        .filter(models.Suggestion.id == suggestion_id)
-        .first()
-    )
-    if not db_suggestion:
-        return None
-    for key, value in suggestion_update.model_dump(exclude_unset=True).items():
-        setattr(db_suggestion, key, value)
-    db.commit()
-    db.refresh(db_suggestion)
-    return db_suggestion
+    try:
+        db_suggestion = (
+            db.query(models.Suggestion)
+            .filter(models.Suggestion.id == suggestion_id)
+            .first()
+        )
+        if not db_suggestion:
+            return {"error": "Suggestion not found"}
+
+        update_data = suggestion_update.model_dump(exclude_unset=True)
+        if "archive" in update_data and current_user.role != "Admin":
+            return {"error": "You do not have permission to update the archive field"}
+
+        for key, value in update_data.items():
+            setattr(db_suggestion, key, value)
+        db.commit()
+        db.refresh(db_suggestion)
+        return db_suggestion
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
 
 
 def create_comment(
@@ -247,21 +261,43 @@ def get_comments_by_suggestion(
     return [comment for comment in comments if not comment.parent_comment_id]
 
 
-def archive_suggestion(db: Session, suggestion_id: int):
-    suggestion = (
-        db.query(models.Suggestion)
-        .filter(models.Suggestion.id == suggestion_id)
-        .first()
-    )
-    suggestion.archived = True
-    db.commit()
-    db.refresh(suggestion)
-    return suggestion
+def archive_suggestion(db: Session, suggestion_id: int, current_user: User):
+    try:
+        suggestion = (
+            db.query(models.Suggestion)
+            .filter(models.Suggestion.id == suggestion_id)
+            .first()
+        )
+        if not suggestion:
+            return {"error": "Suggestion not found"}
+
+        if current_user.role != "admin":
+            return {"error": "You do not have permission to update the archive field"}
+
+        suggestion.archived = True
+        db.commit()
+        db.refresh(suggestion)
+        return suggestion
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}
 
 
-def archive_comment(db: Session, comment_id: int):
-    comment = db.query(models.Comment).filter(models.Comment.id == comment_id).first()
-    comment.archived = True
-    db.commit()
-    db.refresh(comment)
-    return comment
+def archive_comment(db: Session, comment_id: int, current_user: User):
+    try:
+        comment = (
+            db.query(models.Comment).filter(models.Comment.id == comment_id).first()
+        )
+        if not comment:
+            return {"error": "Comment not found"}
+
+        if current_user.role != "admin":
+            return {"error": "You do not have permission to update the archive field"}
+
+        comment.archived = True
+        db.commit()
+        db.refresh(comment)
+        return comment
+    except Exception as e:
+        db.rollback()
+        return {"error": str(e)}

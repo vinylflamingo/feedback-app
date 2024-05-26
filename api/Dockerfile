@@ -10,6 +10,8 @@ WORKDIR /api/src
 # Copy the requirements file into the container
 COPY requirements.txt /api/
 
+COPY seed_data.json /api/
+
 # Install the dependencies
 RUN pip install --no-cache-dir -r /api/requirements.txt
 
