@@ -1,29 +1,46 @@
-<!-- Suggestion Detail Page -->
-
 <template>
   <div>
     <NuxtLink :to="`/suggestion/${id}/edit`">Edit</NuxtLink>
     <h1>Suggestion Detail</h1>
-    <p>The suggestion id is: {{ id }}</p>
+    <!-- <SuggestionDetail v-if="suggestion" :feedbackId="suggestion"/>
+    <div v-else>Loading...</div> -->
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { SUGGESTION_API_CALLS } from '@/constants/constants';
+import { SuggestionApi } from '@/constants/enums';
+import type { Suggestion } from '~/types';
 
 const route = useRoute();
 const router = useRouter();
 const id = ref<number | null>(null);
 
-onMounted(() => {
-  const param = route.params.id;
-  const num = Number(param);
+const { data: suggestion, error } = await useAsyncData<Suggestion>('suggestion', async () => {
+  const newId = Number(route.params.id);
+  if (isNaN(newId) || newId === null || newId === undefined) {
+    await router.push('/404');
+    throw new Error('Invalid ID');
+  }
+  id.value = newId;
+  return await SUGGESTION_API_CALLS[SuggestionApi.GET_SUGGESTION](id.value);
+});
 
-  if (isNaN(num) || num === null || num === undefined) {
-    router.push('/404');
+if (error.value) {
+  console.error('Failed to load suggestion data:', error.value);
+  await router.push('/404');
+}
+
+onMounted(() => {
+  const suggestionId = Number(route.params.id);
+  console.log("Mounted with ID:", suggestionId);
+  if (suggestionId) {
+    id.value = suggestionId;
   } else {
-    id.value = num;
+    console.error('Invalid ID on mount');
+    router.push('/404');
   }
 });
 </script>

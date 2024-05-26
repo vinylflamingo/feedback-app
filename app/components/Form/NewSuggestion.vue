@@ -12,11 +12,11 @@
         description="Choose a category for your feedback"
         :options="categoryOptions"
       />
-      <SingleLineTextField 
+      <MultiLineTextField 
         fieldName="detail" 
         labelText="Feedback Detail" 
         description="Include any specific comments on what should be improved, added, etc."
-        :input-type="detailType" />
+      />
     </div>
   </template>
   
@@ -24,9 +24,8 @@
   import { FormTextTypes, Category } from '@/constants/enums'
   import SingleLineTextField from '@/components/Elements/SingleLineTextField.vue'
   import DropdownField from '@/components/Elements/DropdownField.vue';  
+  import MultiLineTextField from '../Elements/MultiLineTextField.vue';
   const titleType = FormTextTypes.TEXT;
-  const detailType = FormTextTypes.TEXT;
-
   // Convert Category enum to array
   const categoryOptions = Object.values(Category) as string[];
   </script>

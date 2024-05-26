@@ -9,9 +9,9 @@ export enum Category {
 
 export enum Status {
   SUGGESTION = 'Suggestion',
-  PLANNED = 'PLANNED',
+  PLANNED = 'Planned',
   IN_PROGRESS = 'In Progress',
-  LIVE = 'LIVE',
+  LIVE = 'Live',
   COMPLETED = 'Completed',
   ON_HOLD = 'On Hold',
 }

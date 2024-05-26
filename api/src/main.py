@@ -39,15 +39,11 @@ print(SEED_DATA)
 
 models.Base.metadata.create_all(bind=engine)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 app = FastAPI()
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-origins = [
-    "http://localhost:3000",
-]
+origins = ["http://localhost:3000", "https://localhost:3000", "http://localhost"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -164,7 +160,11 @@ def read_top_suggestions(
 
 
 # Get single suggestion
-@app.get("/suggestions/{suggestion_id}", response_model=schemas.Suggestion)
+@app.get(
+    "/suggestions/{suggestion_id}",
+    response_model=schemas.Suggestion,
+    dependencies=[Depends(oauth2_scheme)],
+)
 def read_suggestion(
     suggestion_id: int,
     include_archived: bool = False,
@@ -177,10 +177,6 @@ def read_suggestion(
     )
     if not db_suggestion:
         raise HTTPException(status_code=404, detail="Suggestion not found")
-    if db_suggestion.owner_id != current_user.id:
-        raise HTTPException(
-            status_code=403, detail="Not authorized to view this suggestion"
-        )
     return db_suggestion
 
 

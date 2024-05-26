@@ -31,7 +31,7 @@ const handleSubmit = async (props: FormComponentProps) => {
   const formElements = (document.querySelector(`#${props.formId}`) as HTMLFormElement).elements;
 
   for (const element of Array.from(formElements)) {
-    const inputElement = element as HTMLInputElement;
+    const inputElement = element as HTMLInputElement | HTMLTextAreaElement;
     if (inputElement.name) {
       formData[inputElement.name] = inputElement.value;
     }

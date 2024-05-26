@@ -5,16 +5,16 @@ export interface Api {
     refreshAuthToken(): Promise<string | null>;
     createUser(formData: Record<string, any>): Promise<void>;
     createSuggestion(formData: Record<string, any>): Promise<Number> 
-    getSuggestion(suggestionId: number): Promise<Suggestion | null> 
+    getSuggestion(suggestionId: number, params?: Record<string, any>): Promise<Suggestion | null> 
     updateSuggestion(suggestionId: number, formData: Record<string, any>): Promise<Number>;
-    readSuggestionsByCategory(category: string): Promise<any>;
-    readSuggestionsByStatus(status: string): Promise<any>;
+    readSuggestionsByCategory(category: string, params?: Record<string, any>): Promise<any>;
+    readSuggestionsByStatus(status: string, params?: Record<string, any>): Promise<any>;
     addComment(suggestionId: number, formData: Record<string, any>): Promise<void>;
     addChildComment(suggestionId: number, commentId: string, formData: Record<string, any>): Promise<void>;
-    readCommentsBySuggestion(suggestionId: number): Promise<any>;
+    readCommentsBySuggestion(suggestionId: number, params?: Record<string, any>): Promise<any>;
     upvoteSuggestion(suggestionId: number): Promise<void>;
-    readTopSuggestions(): Promise<any>;
-    readAllSuggestions(): Promise<any>;
+    readTopSuggestions(params?: Record<string, any>): Promise<any>;
+    readAllSuggestions(params?: Record<string, any>): Promise<any>;
     apiClient: AxiosInstance;
     clearToken(): void 
   }

@@ -1,11 +1,10 @@
-# database.py
 import os
-from sqlalchemy import create_engine
+import json
+from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 from passlib.context import CryptContext
-import json
 from .models import User, Suggestion, Comment, Upvote
 
 load_dotenv()
@@ -42,6 +41,15 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def reset_sequence(session, table_name, primary_key_column):
+    session.execute(
+        text(
+            f"SELECT setval(pg_get_serial_sequence('{table_name}', '{primary_key_column}'), coalesce(max({primary_key_column}), 1) + 1, false) FROM {table_name}"
+        )
+    )
+    session.commit()
 
 
 def seed_data():
@@ -169,6 +177,19 @@ def seed_data():
                 print(f"Created upvote with ID {upvote_data['id']} - {upvote.user_id}")
 
         session.commit()
+
+        print("Resetting sequences for Users Table.")
+        reset_sequence(session, "users", "id")
+        print("Success!")
+        print("Resetting sequences for Suggestions Table.")
+        reset_sequence(session, "suggestions", "id")
+        print("Success!")
+        print("Resetting sequences for Comments Table.")
+        reset_sequence(session, "comments", "id")
+        print("Success!")
+        print("Resetting sequences for Upvotes Table.")
+        reset_sequence(session, "upvotes", "id")
+        print("Success!")
 
     except Exception as e:
         session.rollback()

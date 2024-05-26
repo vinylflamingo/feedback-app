@@ -6,5 +6,6 @@ export interface Comment {
     user_id: number;
     created_at: string;
     children: Comment[];
+    archived: boolean;
   }
   

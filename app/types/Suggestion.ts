@@ -10,4 +10,5 @@ export interface Suggestion {
   owner_id: number;
   comments: Comment[];
   upvote_count: number;
+  archived: boolean;
 }

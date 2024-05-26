@@ -2,14 +2,16 @@
 
 import axios, { type AxiosInstance } from 'axios';
 import qs from 'qs';
-import { useAuthStore } from '@/store/auth';
+import { useAuthStore } from '../store/auth';
 import { useCookie, type CookieRef } from '#app';
 import type { Api, Suggestion, Comment } from '~/types';
+import fs from 'fs';
+import path from 'path';
 
 let apiClient: AxiosInstance;
 
-const TOKEN_COOKIE: string = "1023n1212lno12oi12pubd012ud09n12ud90u21d9u12du1n2dn031n";
-const TOKEN_EXPIRATION_COOKIE: string = "token_expiration";
+const TOKEN_COOKIE: string = "auth_token";
+const TOKEN_EXPIRATION_COOKIE: string = "auth_token_expiration";
 
 let tokenLifetime: number;
 let tokenRefreshMargin: number;
@@ -48,8 +50,8 @@ export function handleErrors(error: any): void {
     console.error("API request error:", error.message);
   }
 }
-
-function prepareData(formData: Record<string, any>, contentType: string) {
+ 
+export function prepareData(formData: Record<string, any>, contentType: string) {
   if (contentType === 'application/x-www-form-urlencoded') {
     return qs.stringify(formData);
   }
@@ -147,14 +149,13 @@ const api: Api = {
 
   async createSuggestion(formData: Record<string, any>): Promise<Number> {
     try {
-      formData.status = 'New';
+      formData.status = 'Suggestion';
       formData.completed = false;
       const response = await apiClient.post('/suggestions', formData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      console.log("Response", response)
       if (response.status === 200 && response.data.id) {
         return response.data.id;
       }
@@ -180,7 +181,6 @@ const api: Api = {
           'Content-Type': 'application/json',
         },
       });
-      console.log("Response", response)
       if (response.status === 200 && response.data.id) {
         return response.data.id;
       }
@@ -195,15 +195,13 @@ const api: Api = {
 
   async getSuggestion(suggestionId: number): Promise<Suggestion | null> {
     try {
-      console.log("getSuggestion suggestionId", suggestionId);
       const response = await apiClient.get(`/suggestions/${suggestionId}`, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      console.log("Response", response);
       if (response.status === 200 && response.data) {
-        return response.data as Suggestion;
+        return response.data;
       } else {
         return null;
       }
@@ -214,9 +212,14 @@ const api: Api = {
   },
   
 
-  async readTopSuggestions(): Promise<any> {
+  async readTopSuggestions(params?: Record<string, any>): Promise<any> {
     try {
-      const response = await apiClient.get('/top');
+      const response = await apiClient.get('/top', {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        params,
+      });
       return response.data;
     } catch (error: any) {
       handleErrors(error);
@@ -224,9 +227,14 @@ const api: Api = {
     }
   },
 
-  async readAllSuggestions(): Promise<any> {
+  async readAllSuggestions(params?: Record<string, any>): Promise<any> {
     try {
-      const response = await apiClient.get('/suggestions');
+      const response = await apiClient.get('/suggestions', {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        params,
+      });
       return response.data;
     } catch (error: any) {
       handleErrors(error);
@@ -234,9 +242,14 @@ const api: Api = {
     }
   },
 
-  async readSuggestionsByCategory(category: string): Promise<any> {
+  async readSuggestionsByCategory(category: string, params?: Record<string, any>): Promise<any> {
     try {
-      const response = await apiClient.get(`/suggestions/category/${category}`);
+      const response = await apiClient.get(`/suggestions/category/${category}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        params,
+      });
       return response.data;
     } catch (error: any) {
       handleErrors(error);
@@ -244,9 +257,14 @@ const api: Api = {
     }
   },
 
-  async readSuggestionsByStatus(status: string): Promise<any> {
+  async readSuggestionsByStatus(status: string, params?: Record<string, any>): Promise<any> {
     try {
-      const response = await apiClient.get(`/suggestions/status/${status}`);
+      const response = await apiClient.get(`/suggestions/status/${status}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        params,
+      });
       return response.data;
     } catch (error: any) {
       handleErrors(error);
@@ -282,9 +300,14 @@ const api: Api = {
     }
   },
 
-  async readCommentsBySuggestion(suggestionId: number): Promise<any> {
+  async readCommentsBySuggestion(suggestionId: number, params?: Record<string, any>): Promise<any> {
     try {
-      const response = await apiClient.get(`/suggestions/${suggestionId}/comments`);
+      const response = await apiClient.get(`/suggestions/${suggestionId}/comments`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        params,
+      });
       return response.data;
     } catch (error: any) {
       handleErrors(error);
@@ -308,11 +331,13 @@ export const initializeApiClient = (baseURL: string, tokenLife: number, refreshM
     headers: {
       'Content-Type': 'application/json',
     },
+    paramsSerializer: (params) => {
+      return qs.stringify(params, { arrayFormat: 'brackets' });
+    },
   });
 
   tokenLifetime = tokenLife;
   tokenRefreshMargin = refreshMargin;
-
   const authStore = useAuthStore();
   const tokenCookie = useCookie(TOKEN_COOKIE);
   const tokenExpirationCookie = useCookie(TOKEN_EXPIRATION_COOKIE);
@@ -369,6 +394,7 @@ export const initializeApiClient = (baseURL: string, tokenLife: number, refreshM
   setupInterceptors();
 
   api.apiClient = apiClient;
+  console.log("initializeApiClient finished running")
 };
 
 

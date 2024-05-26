@@ -39,10 +39,17 @@ def get_suggestions_count(db: Session, include_archived: bool = False):
     return db.query(models.Suggestion).count()
 
 
-def get_suggestion(db: Session, suggestion_id: int):
+def get_suggestion(db: Session, suggestion_id: int, include_archived: bool = False):
+    if not include_archived:
+        return (
+            db.query(models.Suggestion)
+            .filter(models.Suggestion.id == suggestion_id)
+            .first()
+        )
     return (
         db.query(models.Suggestion)
         .filter(models.Suggestion.id == suggestion_id)
+        .filter(models.Suggestion.archived == False)
         .first()
     )
 
