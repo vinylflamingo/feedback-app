@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-      "build": "BUILD_TIME=true nuxt build",
+      "build": "BUILD_TIME=true npm run static && nuxt build",
       "dev": "nuxt dev",
       "generate": "nuxt generate",
       "preview": "nuxt preview",

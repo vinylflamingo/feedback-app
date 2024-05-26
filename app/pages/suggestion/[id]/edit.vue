@@ -22,10 +22,19 @@ import type { Suggestion } from '~/types';
 const route = useRoute();
 const router = useRouter();
 const id = ref<number | null>(null);
-const suggestion = ref<Suggestion | null>(null);
 const formApiCall = SUGGESTION_API_CALLS[SuggestionApi.UPDATE_SUGGESTION];
 
-// Watch for route parameter changes
+const fetchSuggestion = async (suggestionId: number) => {
+  if (isNaN(suggestionId) || suggestionId === null || suggestionId === undefined) {
+    await router.push('/404');
+    throw new Error('Invalid ID');
+  }
+  id.value = suggestionId;
+  return await SUGGESTION_API_CALLS[SuggestionApi.GET_SUGGESTION](id.value);
+};
+
+const { data: suggestion, error, refresh } = await useAsyncData<Suggestion>('suggestion-edit', () => fetchSuggestion(Number(route.params.id)));
+
 watch(
   () => route.params.id,
   async (newId) => {
@@ -36,33 +45,25 @@ watch(
         throw new Error('Invalid ID');
       }
       id.value = suggestionId;
-      fetchSuggestion(suggestionId);
+      await refresh();
     }
   },
   { immediate: true }
 );
 
-// Fetch the suggestion data
-async function fetchSuggestion(suggestionId: number) {
-  try {
-    const response = await SUGGESTION_API_CALLS[SuggestionApi.GET_SUGGESTION](suggestionId);
-    suggestion.value = response;
-  } catch (error) {
-    console.error('Failed to load suggestion data:', error);
-    await router.push('/404');
-  }
-}
-
-// Ensure the parameter is set on component mount
 onMounted(() => {
   const suggestionId = Number(route.params.id);
   console.log("Mounted with ID:", suggestionId);
   if (suggestionId) {
     id.value = suggestionId;
-    fetchSuggestion(suggestionId);
   } else {
     console.error('Invalid ID on mount');
     router.push('/404');
   }
 });
+
+if (error.value) {
+  console.error('Failed to load suggestion data:', error.value);
+  router.push('/404');
+}
 </script>

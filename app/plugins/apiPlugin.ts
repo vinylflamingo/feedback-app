@@ -29,38 +29,38 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   initializeApiClient(baseUrl, tokenLifetime, tokenRefreshMargin);
 
-  // async function performLogin() {
-  //   try {
-  //     const loginData = {
-  //       username: config.public.BUILD_ADMIN_USERNAME,
-  //       password: config.public.BUILD_ADMIN_PASSWORD,
-  //     };
+  async function performLogin() {
+    try {
+      const loginData = {
+        username: config.public.BUILD_ADMIN_USERNAME,
+        password: config.public.BUILD_ADMIN_PASSWORD,
+      };
 
-  //     const data = qs.stringify(loginData, { format: 'RFC1738' });
-  //     const response = await api.apiClient.post('/token', data, {
-  //       headers: {
-  //         'Content-Type': 'application/x-www-form-urlencoded',
-  //       },
-  //     });
+      const data = qs.stringify(loginData, { format: 'RFC1738' });
+      const response = await api.apiClient.post('/token', data, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
 
-  //     const token = response.data.access_token;
-  //     api.apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  //     authStore.setToken(token);
-  //     const expirationDate = new Date();
-  //     expirationDate.setSeconds(expirationDate.getSeconds() + maxAge);
-  //     authStore.setTokenExpiration(expirationDate);
-  //     tokenExpirationCookie.value = expirationDate.toISOString();
-  //   } catch (error) {
-  //     console.error('Failed to log in:', error);
-  //     throw new Error('Failed to log in');
-  //   }
-  // };
+      const token = response.data.access_token;
+      api.apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      authStore.setToken(token);
+      const expirationDate = new Date();
+      expirationDate.setSeconds(expirationDate.getSeconds() + maxAge);
+      authStore.setTokenExpiration(expirationDate);
+      tokenExpirationCookie.value = expirationDate.toISOString();
+    } catch (error) {
+      console.error('Failed to log in:', error);
+      throw new Error('Failed to log in');
+    }
+  };
 
-  // console.log("is build time?", process.env.BUILD_TIME)
-  // if (process.env.BUILD_TIME === 'true') {
+  console.log("is build time?", process.env.BUILD_TIME)
+  if (process.env.BUILD_TIME === 'true') {
 
-  //   await performLogin();
-  // }
+    await performLogin();
+  }
 
   // Ensure that all subsequent requests use the token
   api.apiClient.interceptors.request.use(config => {

@@ -1,38 +1,48 @@
 <template>
-    <div >
-      <!-- Render your suggestion details here -->
-      <h1>{{ }}</h1>
-      <p>{{  }}</p>
+  <div>
+    <div v-if="loading">Loading...</div>
+    <div v-else>
+      <h1>{{ feedbackData.title }}</h1>
+      <p>category: {{ feedbackData.category }}</p>
+      <p>status: {{ feedbackData.status }}</p>
+      <p>details: {{ feedbackData.detail }}</p>
+      <p>up_votes: {{ feedbackData.upvote_count }}</p>
+      <ul>
+        <li v-for="comment in feedbackData.comments">
+          {{ comment.user_id }}
+          {{ comment.text }}
+        </li>
+      </ul>
     </div>
-    <div >
-      <p>Loading...</p>
-    </div>
-  </template>
-  
-  <script setup lang="ts">
-//   import { ref, watch } from 'vue';
-//   import { useRoute, useRouter } from 'vue-router';
-//   import { SUGGESTION_API_CALLS } from '@/constants/constants';
-//   import { SuggestionApi } from '@/constants/enums';
-//   import { type Suggestion } from '~/types';
-  
-//   interface SuggestionDetailProps {
-//     suggestion: Suggestion;
-//   }
-  
-//   const props = defineProps<SuggestionDetailProps>();
-  
-//   const route = useRoute();
-//   const router = useRouter();
-//   const id = reactive<Suggestion | null>(null);
-  
-  
-//   watch(() => route.params.id, (newId) => {
-//     const num = Number(newId);
-//     if (isNaN(num) || num === null || num === undefined) {
-//       router.push('/404');
-//     } else {
-//       id.value = num;
-//     }
-//   }, { immediate: true });
-  </script>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, onMounted } from 'vue';
+import type { Suggestion } from '~/types';
+
+interface EditSuggestionFormProps {
+  suggestion: Suggestion;
+}
+
+const props = defineProps<EditSuggestionFormProps>();
+
+const feedbackData = reactive<Suggestion>({
+  title: props.suggestion.title,
+  detail: props.suggestion.detail,
+  category: props.suggestion.category,
+  status: props.suggestion.status,
+  completed: props.suggestion.completed,
+  id: props.suggestion.id,
+  owner_id: props.suggestion.owner_id,
+  comments: props.suggestion.comments,
+  upvote_count: props.suggestion.upvote_count,
+  archived: props.suggestion.archived
+});
+
+const loading = ref(true);
+
+onMounted(() => {
+  loading.value = false;
+});
+</script>

@@ -2,8 +2,8 @@
   <div>
     <NuxtLink :to="`/suggestion/${id}/edit`">Edit</NuxtLink>
     <h1>Suggestion Detail</h1>
-    <!-- <SuggestionDetail v-if="suggestion" :feedbackId="suggestion"/>
-    <div v-else>Loading...</div> -->
+    <SuggestionDetail v-if="suggestion" :suggestion="suggestion"/>
+    <div v-else>Loading...</div>
   </div>
 </template>
 
@@ -13,6 +13,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { SUGGESTION_API_CALLS } from '@/constants/constants';
 import { SuggestionApi } from '@/constants/enums';
 import type { Suggestion } from '~/types';
+import SuggestionDetail from '~/components/Dashboard/SuggestionDetail.vue';
 
 const route = useRoute();
 const router = useRouter();

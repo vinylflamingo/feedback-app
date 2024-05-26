@@ -196,7 +196,7 @@ def update_suggestion(
     db_suggestion = crud.get_suggestion(db, suggestion_id=suggestion_id)
     if not db_suggestion:
         raise HTTPException(status_code=404, detail="Suggestion not found")
-    if db_suggestion.owner_id != current_user.id:
+    if db_suggestion.owner_id != current_user.id and current_user.role != "admin":
         raise HTTPException(
             status_code=403, detail="Not authorized to update this suggestion"
         )
