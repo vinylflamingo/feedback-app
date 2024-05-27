@@ -56,8 +56,9 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     }
   };
 
-  console.log("is build time?", process.env.BUILD_TIME)
-  if (process.env.BUILD_TIME === 'true') {
+  console.log("is build time?", process.env.BUILD_TIME ? true : false)
+  if (process.env.BUILD_TIME === 'true' && process.env.BUILD_TIME != undefined) {
+    console.log("admin automatic login triggered")
 
     await performLogin();
   }

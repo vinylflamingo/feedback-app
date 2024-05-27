@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div v-if="loading">Loading...</div>
+   <LoadingSvg v-if="loading" />
     <div v-else>
-      <h1>{{ feedbackData.title }}</h1>
-      <p>category: {{ feedbackData.category }}</p>
-      <p>status: {{ feedbackData.status }}</p>
-      <p>details: {{ feedbackData.detail }}</p>
-      <p>up_votes: {{ feedbackData.upvote_count }}</p>
+      <h1>{{ props.suggestion.title }}</h1>
+      <p>category: {{ props.suggestion.category }}</p>
+      <p>status: {{ props.suggestion.status }}</p>
+      <p>details: {{ props.suggestion.detail }}</p>
+      <p>up_votes: {{ props.suggestion.upvote_count }}</p>
       <ul>
-        <li v-for="comment in feedbackData.comments">
+        <li v-for="comment in props.suggestion.comments">
           {{ comment.user_id }}
           {{ comment.text }}
         </li>
@@ -20,26 +20,10 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
 import type { Suggestion } from '~/types';
+import LoadingSvg from '../Elements/LoadingSvg.vue';
 
-interface EditSuggestionFormProps {
-  suggestion: Suggestion;
-}
 
-const props = defineProps<EditSuggestionFormProps>();
-
-const feedbackData = reactive<Suggestion>({
-  title: props.suggestion.title,
-  detail: props.suggestion.detail,
-  category: props.suggestion.category,
-  status: props.suggestion.status,
-  completed: props.suggestion.completed,
-  id: props.suggestion.id,
-  owner_id: props.suggestion.owner_id,
-  comments: props.suggestion.comments,
-  upvote_count: props.suggestion.upvote_count,
-  archived: props.suggestion.archived
-});
-
+const props = defineProps<{ suggestion: Suggestion }>();
 const loading = ref(true);
 
 onMounted(() => {

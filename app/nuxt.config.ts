@@ -35,5 +35,7 @@ export default defineNuxtConfig({
     prerender: {
       routes: routes,
     }
-  }
+  },
+  ssr: true,
+  
 });

@@ -3,7 +3,7 @@
     <NuxtLink :to="`/suggestion/${id}/edit`">Edit</NuxtLink>
     <h1>Suggestion Detail</h1>
     <SuggestionDetail v-if="suggestion" :suggestion="suggestion"/>
-    <div v-else>Loading...</div>
+    <LoadingSvg v-else/>
   </div>
 </template>
 
@@ -14,6 +14,7 @@ import { SUGGESTION_API_CALLS } from '@/constants/constants';
 import { SuggestionApi } from '@/constants/enums';
 import type { Suggestion } from '~/types';
 import SuggestionDetail from '~/components/Dashboard/SuggestionDetail.vue';
+import LoadingSvg from '~/components/Elements/LoadingSvg.vue';
 
 const route = useRoute();
 const router = useRouter();

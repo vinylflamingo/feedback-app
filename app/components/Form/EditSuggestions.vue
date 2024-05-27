@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Edit Feedback</h1>
-    <div v-if="loading">Loading...</div>
+    <LoadingSvg v-if="loading" />
     <div v-else>
       <SingleLineTextField 
         fieldName="title" 
@@ -34,6 +34,7 @@
 </template>
 
 <script setup lang="ts">
+import LoadingSvg from '../Elements/LoadingSvg.vue';
 import { ref, reactive, onMounted } from 'vue';
 import { FormTextTypes, Category, Status } from '@/constants/enums';
 import SingleLineTextField from '@/components/Elements/SingleLineTextField.vue';

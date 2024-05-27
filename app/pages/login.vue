@@ -13,6 +13,10 @@ import { AUTH_API_CALLS } from '@/constants/constants';
 import { AuthApi } from '@/constants/enums';
 const formType = AUTH_API_CALLS[AuthApi.LOGIN];
 const route = useRoute()
+const router = useRouter()
+if (route.path !== '/login') {
+  router.replace({ path: '/login', query: route.query });
+}
 const returnUrl: string = route.query.returnUrl as string || '/';
 console.log("Return Url: ", returnUrl)
 </script>

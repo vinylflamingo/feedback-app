@@ -58,6 +58,7 @@ export function prepareData(formData: Record<string, any>, contentType: string) 
   return formData;
 }
 
+
 const api: Api = {
   apiClient: {} as AxiosInstance,
 

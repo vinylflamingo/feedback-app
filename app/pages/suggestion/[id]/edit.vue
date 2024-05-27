@@ -5,7 +5,7 @@
     <p>The suggestion id is: {{ id }}</p>
     <Base :apiCall="formApiCall" formId="base-form" :suggestionId="id">
       <EditSuggestions v-if="suggestion" :suggestion="suggestion"/>
-      <div v-else>Loading...</div>
+      <LoadingSvg v-else/>
     </Base>
   </div>
 </template>
@@ -13,6 +13,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import LoadingSvg from '~/components/Elements/LoadingSvg.vue';
 import Base from '~/components/Form/Base.vue';
 import { SUGGESTION_API_CALLS } from '@/constants/constants';
 import { SuggestionApi } from '@/constants/enums';

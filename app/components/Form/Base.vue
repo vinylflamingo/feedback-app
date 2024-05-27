@@ -9,6 +9,8 @@
 import { type ApiFunction } from '@/constants/constants';
 import { defineProps, withDefaults } from 'vue';
 
+const router = useRouter();
+
 interface FormComponentProps {
   apiCall: ApiFunction;
   formId?: string;
@@ -50,7 +52,7 @@ const handleSubmit = async (props: FormComponentProps) => {
 
     if (typeof response === 'number' && !isNaN(response)) {
       const path = "/suggestion/" + response;
-      await navigateTo(path);
+      await router.push(path)
     }
 
     console.log("API call successful with data:", formData);
@@ -60,7 +62,7 @@ const handleSubmit = async (props: FormComponentProps) => {
 
   if (!stringIsNullOrEmpty(props.returnUrl)) {
     console.log("Return URL prop passed. Now redirecting... ", props.returnUrl);
-    await navigateTo(props.returnUrl);
+    window.location.href = props.returnUrl!;  // This will force a full page reload. 
   }
 };
 </script>
