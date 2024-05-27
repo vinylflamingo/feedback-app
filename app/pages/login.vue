@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import Base from '@/components/Form/Base.vue';
 import Login from '@/components/Form/Login.vue';
-import { AUTH_API_CALLS } from '@/constants/constants';
+import { AUTH_API_CALLS } from '~/constants/api-calls';
 import { AuthApi } from '@/constants/enums';
 const formType = AUTH_API_CALLS[AuthApi.LOGIN];
 const route = useRoute()

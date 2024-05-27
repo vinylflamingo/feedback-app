@@ -3,12 +3,13 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "BUILD_TIME=true npm run static && nuxt build",
+        "build-static": "BUILD_TIME=true npm run static && nuxt build",
         "dev": "nuxt dev",
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
-        "static": "node build.cjs"
+        "static": "node build.cjs",
+        "build": "nuxt build"
     },
     "dependencies": {
         "@pinia/nuxt": "^0.5.1",

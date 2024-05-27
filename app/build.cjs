@@ -1,6 +1,6 @@
 const axios = require('axios');
 const qs = require('qs');
-const { writeFileSync } = require('fs');
+const { writeFileSync, mkdirSync } = require('fs');
 const path = require('path');
 require('dotenv').config();
 
@@ -23,7 +23,7 @@ async function generateRoutes() {
     password: process.env.BUILD_ADMIN_PASSWORD,
   };
 
-  console.log(loginData)
+  console.log(loginData);
 
   try {
     const data = qs.stringify(loginData, { format: 'RFC1738' });
@@ -45,7 +45,7 @@ async function generateRoutes() {
 
   let suggestions = [];
   try {
-    const response = await apiClient.get('/suggestions?limit=10000000', {
+    const response = await apiClient.get('/suggestions/?limit=10000000', {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -62,7 +62,10 @@ async function generateRoutes() {
     `/suggestion/${suggestion.id}/edit`,
   ]);
 
-  const filePath = path.resolve(__dirname, './.build/staticRoutes.json');
+  const dirPath = path.resolve(__dirname, './.build');
+  mkdirSync(dirPath, { recursive: true });
+
+  const filePath = path.join(dirPath, 'staticRoutes.json');
   writeFileSync(filePath, JSON.stringify(urls, null, 2));
   console.log('Routes written to staticRoutes.json');
 }

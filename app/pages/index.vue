@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { SUGGESTION_API_CALLS } from '@/constants/constants';
+import { SUGGESTION_API_CALLS } from '~/constants/api-calls';
 import { SuggestionApi } from '@/constants/enums';
 import SuggestionListing from '@/components/Dashboard/SuggestionListing.vue'
 import LoadingSvg from '~/components/Elements/LoadingSvg.vue';
@@ -23,6 +23,6 @@ const { data: suggestions, error } = await useAsyncData<Suggestion[]>('dashboard
 });
 if (error.value) {
   console.error('Failed to load suggestions data:', error.value);
-  await router.push('/404');
+  navigateTo('/login')
 }
 </script>

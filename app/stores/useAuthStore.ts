@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 interface AuthState {
   token: string | null;
-  tokenExpiration: Date | null;
+  tokenExpiration: Date | string | null;
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -13,6 +13,8 @@ export const useAuthStore = defineStore('auth', {
   }),
   getters: {
     isAuthenticated: (state: AuthState) => !!state.token,
+    getTokenExpiration: (state: AuthState) => state.tokenExpiration,
+    getToken: (state: AuthState) => state.token
   },
   actions: {
     setToken(token: string | null) {
@@ -22,11 +24,8 @@ export const useAuthStore = defineStore('auth', {
       this.token = null
       this.tokenExpiration = null
     },
-    setTokenExpiration(expiration: Date | null) {
+    setTokenExpiration(expiration: Date | string| null) {
       this.tokenExpiration = expiration;
     },
-    getTokenExpiration() {
-      return this.tokenExpiration;
-    }
   },
 })

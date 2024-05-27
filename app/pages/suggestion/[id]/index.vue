@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { SUGGESTION_API_CALLS } from '@/constants/constants';
+import { SUGGESTION_API_CALLS } from '~/constants/api-calls';
 import { SuggestionApi } from '@/constants/enums';
 import type { Suggestion } from '~/types';
 import SuggestionDetail from '~/components/Dashboard/SuggestionDetail.vue';

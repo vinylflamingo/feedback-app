@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { type ApiFunction } from '@/constants/constants';
+import { type ApiFunction } from '@/constants/api-calls';
 import { defineProps, withDefaults } from 'vue';
 
 const router = useRouter();
@@ -52,7 +52,7 @@ const handleSubmit = async (props: FormComponentProps) => {
 
     if (typeof response === 'number' && !isNaN(response)) {
       const path = "/suggestion/" + response;
-      await router.push(path)
+      await navigateTo(path)
     }
 
     console.log("API call successful with data:", formData);

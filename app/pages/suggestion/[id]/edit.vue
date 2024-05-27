@@ -15,7 +15,7 @@ import { ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import LoadingSvg from '~/components/Elements/LoadingSvg.vue';
 import Base from '~/components/Form/Base.vue';
-import { SUGGESTION_API_CALLS } from '@/constants/constants';
+import { SUGGESTION_API_CALLS } from '~/constants/api-calls';
 import { SuggestionApi } from '@/constants/enums';
 import EditSuggestions from '~/components/Form/EditSuggestions.vue';
 import type { Suggestion } from '~/types';
@@ -27,12 +27,19 @@ const formApiCall = SUGGESTION_API_CALLS[SuggestionApi.UPDATE_SUGGESTION];
 
 const fetchSuggestion = async (suggestionId: number) => {
   if (isNaN(suggestionId) || suggestionId === null || suggestionId === undefined) {
-    await router.push('/404');
+    await navigateTo('/500');
     throw new Error('Invalid ID');
   }
   id.value = suggestionId;
   return await SUGGESTION_API_CALLS[SuggestionApi.GET_SUGGESTION](id.value);
 };
+
+// Set the id immediately
+if (route.params.id) {
+  id.value = Number(route.params.id);
+} else {
+  id.value = null;
+}
 
 const { data: suggestion, error, refresh } = await useAsyncData<Suggestion>('suggestion-edit', () => fetchSuggestion(Number(route.params.id)));
 
@@ -42,7 +49,7 @@ watch(
     if (newId) {
       const suggestionId = Number(newId);
       if (isNaN(suggestionId) || suggestionId === null || suggestionId === undefined) {
-        await router.push('/404');
+        await navigateTo('/404');
         throw new Error('Invalid ID');
       }
       id.value = suggestionId;
@@ -54,17 +61,15 @@ watch(
 
 onMounted(() => {
   const suggestionId = Number(route.params.id);
-  console.log("Mounted with ID:", suggestionId);
   if (suggestionId) {
     id.value = suggestionId;
   } else {
-    console.error('Invalid ID on mount');
-    router.push('/404');
+    navigateTo('/404');
   }
 });
 
 if (error.value) {
   console.error('Failed to load suggestion data:', error.value);
-  router.push('/404');
+  navigateTo('/500');
 }
 </script>
