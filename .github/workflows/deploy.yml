@@ -15,9 +15,7 @@ jobs:
       - name: Check for changes in the api folder
         id: check_changes
         run: |
-          # Fetch the base reference to compare changes
           git fetch origin ${{ github.event.before }}
-          # Check for changes in the api folder
           if git diff --quiet ${{ github.event.before }} HEAD -- api; then
             echo "No changes in the api folder"
             echo "::set-output name=changes::false"
@@ -30,12 +28,15 @@ jobs:
         if: steps.check_changes.outputs.changes == 'false'
         run: |
           echo "No changes detected in the api folder, exiting..."
-          exit 0
+          exit 1
+        continue-on-error: true
 
       - name: Set up Docker Buildx
+        if: steps.check_changes.outputs.changes == 'true'
         uses: docker/setup-buildx-action@v1
 
       - name: Cache Docker layers
+        if: steps.check_changes.outputs.changes == 'true'
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
@@ -44,15 +45,18 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Set up QEMU
+        if: steps.check_changes.outputs.changes == 'true'
         uses: docker/setup-qemu-action@v1
 
       - name: Log in to Docker Hub
+        if: steps.check_changes.outputs.changes == 'true'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Create .env file
+        if: steps.check_changes.outputs.changes == 'true'
         run: |
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> ./api/.env
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> ./api/.env
@@ -69,27 +73,32 @@ jobs:
           echo "PYTHONUNBUFFERED=1" >> ./api/.env
 
       - name: Build and push Docker image
+        if: steps.check_changes.outputs.changes == 'true'
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/vinylflamingo-feeback-api:latest ./api
           docker push ${{ secrets.DOCKER_USERNAME }}/vinylflamingo-feeback-api:latest
 
       - name: Setup SSH key
+        if: steps.check_changes.outputs.changes == 'true'
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.DIGITALOCEAN_SSH_KEY }}" | tr -d '\r' | cat > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
       - name: Add DigitalOcean to known_hosts
+        if: steps.check_changes.outputs.changes == 'true'
         run: |
           ssh-keyscan -H ${{ secrets.DIGITALOCEAN_HOST }} >> ~/.ssh/known_hosts
 
       - name: Cleanup old containers and volumes
+        if: steps.check_changes.outputs.changes == 'true'
         env:
           SSH_PRIVATE_KEY: ~/.ssh/id_rsa
         run: |
           ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_HOST }} "docker compose -f /opt/vinylflamingo/docker-compose.yml -f /opt/vinylflamingo/docker-compose.prod.yml down -v"
 
       - name: Deploy to DigitalOcean
+        if: steps.check_changes.outputs.changes == 'true'
         env:
           SSH_PRIVATE_KEY: ~/.ssh/id_rsa
         run: |

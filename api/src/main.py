@@ -48,6 +48,7 @@ origins = [
     "https://localhost:3000",
     "http://localhost",
     "http://[::1]:3000",
+    "https://feedback.frankcostoya.com",
 ]
 
 app.add_middleware(
