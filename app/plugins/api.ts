@@ -2,7 +2,7 @@ import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 import axios from 'axios'
 import qs from 'qs'
 import api from '@/services/api'
-import { useAuthStore } from '~/stores'
+import { useAuthStore } from '~/stores/useAuthStore'
 import { useCookie } from '#app'
 
 let isRefreshing = false
