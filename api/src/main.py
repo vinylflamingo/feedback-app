@@ -118,7 +118,7 @@ async def refresh_token(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/users/me/", response_model=schemas.User)
+@app.get("/users/me", response_model=schemas.User)
 async def read_users_me(current_user: models.User = Depends(get_current_user)):
     return current_user
 
@@ -133,7 +133,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 # Post new suggestions
 @app.post(
-    "/suggestions/",
+    "/suggestions",
     response_model=schemas.Suggestion,
     dependencies=[Depends(oauth2_scheme)],
 )
@@ -148,7 +148,7 @@ def create_suggestion(
 
 # Get top suggestions by upvotes
 @app.get(
-    "/top/",
+    "/top",
     response_model=List[schemas.Suggestion],
     dependencies=[Depends(oauth2_scheme)],
 )
@@ -219,7 +219,7 @@ def update_suggestion(
 
 # Get all suggestions
 @app.get(
-    "/suggestions/",
+    "/suggestions",
     response_model=List[schemas.Suggestion],
     dependencies=[Depends(oauth2_scheme)],
 )
@@ -281,7 +281,7 @@ def read_suggestions_by_status(
 
 # Submit an upvote
 @app.post(
-    "/suggestions/{suggestion_id}/upvote/",
+    "/suggestions/{suggestion_id}/upvote",
     response_model=schemas.Upvote,
     dependencies=[Depends(oauth2_scheme)],
 )
@@ -299,7 +299,7 @@ def upvote_suggestion(
 
 # Toggle an upvote
 @app.post(
-    "/suggestions/{suggestion_id}/toggle_upvote/",
+    "/suggestions/{suggestion_id}/toggle_upvote",
     response_model=schemas.Upvote,
     dependencies=[Depends(oauth2_scheme)],
 )
@@ -317,7 +317,7 @@ def toggle_upvote(
 
 # Get comments by suggestion
 @app.get(
-    "/suggestions/{suggestion_id}/comments/",
+    "/suggestions/{suggestion_id}/comments",
     response_model=List[schemas.Comment],
     dependencies=[Depends(oauth2_scheme)],
 )
@@ -336,7 +336,7 @@ def read_comments_by_suggestion(
 
 # Submit an comment
 @app.post(
-    "/suggestions/{suggestion_id}/comments/",
+    "/suggestions/{suggestion_id}/comments",
     response_model=schemas.Comment,
     dependencies=[Depends(oauth2_scheme)],
 )

@@ -162,7 +162,7 @@ export const clearAuthToken = (): void => {
 // API Calls
 export const createUser = async (formData: Record<string, any>): Promise<void> => {
   try {
-    await apiClient.post('/users/', formData, {
+    await apiClient.post('/users', formData, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -177,7 +177,7 @@ export const createSuggestion = async (formData: Record<string, any>): Promise<n
   try {
     formData.status = 'Suggestion'
     formData.completed = false
-    const response = await apiClient.post('/suggestions/', formData, {
+    const response = await apiClient.post('/suggestions', formData, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -199,7 +199,7 @@ export const updateSuggestion = async (
 ): Promise<number> => {
   try {
     const response = await apiClient.put(
-      `/suggestions/${suggestionId}/`,
+      `/suggestions/${suggestionId}`,
       formData,
       {
         headers: {
@@ -220,7 +220,7 @@ export const updateSuggestion = async (
 
 export const getSuggestion = async (suggestionId: number): Promise<Suggestion | null> => {
   try {
-    const response = await apiClient.get(`/suggestions/${suggestionId}/`, {
+    const response = await apiClient.get(`/suggestions/${suggestionId}`, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -238,7 +238,7 @@ export const getSuggestion = async (suggestionId: number): Promise<Suggestion | 
 
 export const readTopSuggestions = async (params?: Record<string, any>): Promise<any> => {
   try {
-    const response = await apiClient.get('/top/', {
+    const response = await apiClient.get('/top', {
       headers: {
         'Content-Type': 'application/json'
       },
@@ -253,7 +253,7 @@ export const readTopSuggestions = async (params?: Record<string, any>): Promise<
 
 export const readAllSuggestions = async (params?: Record<string, any>): Promise<any> => {
   try {
-    const response = await apiClient.get('/suggestions/', {
+    const response = await apiClient.get('/suggestions', {
       headers: {
         'Content-Type': 'application/json'
       },
@@ -262,7 +262,7 @@ export const readAllSuggestions = async (params?: Record<string, any>): Promise<
     return response.data
   } catch (error: any) {
     handleErrors(error)
-    throw new Error('Failed to read all suggestions/')
+    throw new Error('Failed to read all suggestions')
   }
 }
 
@@ -292,7 +292,7 @@ export const readSuggestionsByStatus = async (
   params?: Record<string, any>
 ): Promise<any> => {
   try {
-    const response = await apiClient.get(`/suggestions/status/${status}/`, {
+    const response = await apiClient.get(`/suggestions/status/${status}`, {
       headers: {
         'Content-Type': 'application/json'
       },
@@ -311,7 +311,7 @@ export const addComment = async (
 ): Promise<void> => {
   try {
     const data = prepareData(formData, 'application/json')
-    await apiClient.post(`/suggestions/${suggestionId}/comments/`, data, {
+    await apiClient.post(`/suggestions/${suggestionId}/comments`, data, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -332,7 +332,7 @@ export const addChildComment = async (
       { ...formData, parent_comment_id: commentId },
       'application/json'
     )
-    await apiClient.post(`/suggestions/${suggestionId}/comments/`, data, {
+    await apiClient.post(`/suggestions/${suggestionId}/comments`, data, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -349,7 +349,7 @@ export const readCommentsBySuggestion = async (
 ): Promise<any> => {
   try {
     const response = await apiClient.get(
-      `/suggestions/${suggestionId}/comments/`,
+      `/suggestions/${suggestionId}/comments`,
       {
         headers: {
           'Content-Type': 'application/json'
@@ -366,7 +366,7 @@ export const readCommentsBySuggestion = async (
 
 export const upvoteSuggestion = async (suggestionId: number): Promise<void> => {
   try {
-    await apiClient.post(`/suggestions/${suggestionId}/upvote/`)
+    await apiClient.post(`/suggestions/${suggestionId}/upvote`)
   } catch (error: any) {
     handleErrors(error)
     throw new Error('Failed to upvote suggestion')
