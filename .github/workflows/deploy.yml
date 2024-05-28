@@ -52,6 +52,10 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/vinylflamingo-feeback-api:latest ./api
           docker push ${{ secrets.DOCKER_USERNAME }}/vinylflamingo-feeback-api:latest
 
+      - name: Add DigitalOcean to known_hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.DIGITALOCEAN_HOST }} >> ~/.ssh/known_hosts
+
       - name: Deploy to DigitalOcean
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_SSH_KEY }}
