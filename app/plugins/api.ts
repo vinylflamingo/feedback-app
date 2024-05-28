@@ -9,10 +9,9 @@ let isRefreshing = false
 
 export default defineNuxtPlugin(async (nuxtApp) => {
   const config = useRuntimeConfig()
-  const env = config.public as { [key: string]: string }
   const authStore = useAuthStore()
 
-  const baseUrl: string = env.BASE_URL || "https://localhost:8000"
+  const baseUrl: string = config.public.BASE_URL || "https://localhost:8000"
   console.log('Initializing API client with baseURL:', baseUrl)
 
   const apiClient = axios.create({
