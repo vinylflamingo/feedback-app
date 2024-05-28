@@ -68,4 +68,4 @@ jobs:
           SSH_PRIVATE_KEY: ~/.ssh/id_rsa
         run: |
           scp -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ./api/docker-compose.yml ./api/docker-compose.prod.yml ./api/.env ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_HOST }}:/opt/vinylflamingo
-          ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_HOST }} "cd /opt/vinylflamingo && docker pull fcostoya/vinylflamingo-feeback-api:latest && docker-compose --env-file .env  -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans"
+          ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_HOST }} "cd /opt/vinylflamingo && docker pull fcostoya/vinylflamingo-feeback-api:latest && docker compose --env-file .env  -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans"
