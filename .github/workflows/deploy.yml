@@ -34,6 +34,7 @@ jobs:
 
       - name: Create .env file
         run: |
+          echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> ./api/.env
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> ./api/.env
           echo "ALGORITHM=HS256" >> ./api/.env
           echo "ACCESS_TOKEN_EXPIRE_MINUTES=60" >> ./api/.env
@@ -46,8 +47,6 @@ jobs:
           echo "SEED_DATA=True" >> ./api/.env
           echo "DEFAULT_RESPONSE_LIMIT=20" >> ./api/.env
           echo "PYTHONUNBUFFERED=1" >> ./api/.env
-          echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME}}" >> ./api/.env
-          echo "DOCKER_PASSWORD=${{ secrets.DOCKER_PASSWORD}}" >> ./api/.env
 
       - name: Build and push Docker image
         run: |
@@ -69,4 +68,4 @@ jobs:
           SSH_PRIVATE_KEY: ~/.ssh/id_rsa
         run: |
           scp -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ./api/docker-compose.yml ./api/docker-compose.prod.yml ./api/.env ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_HOST }}:/opt/vinylflamingo
-          ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_HOST }} "cd /opt/vinylflamingo && docker pull fcostoya/vinylflamingo-feeback-api:latest && docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans"
+          ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_HOST }} "cd /opt/vinylflamingo && docker pull fcostoya/vinylflamingo-feeback-api:latest && docker-compose --env-file .env  -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans"

@@ -1,6 +1,0 @@
-services:
-  api:
-    environment:
-      - ENV=development
-    volumes:
-      - ./src:/app/src
