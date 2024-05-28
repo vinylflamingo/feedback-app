@@ -1,31 +1,34 @@
-# Use the official Python image as the base image
-FROM python:3.10
+FROM python:3.12.3-slim
 
-# Install inotify-tools
-RUN apt-get update && apt-get install -y inotify-tools
 
-# Set the working directory in the container
-WORKDIR /api/src
+WORKDIR /app
 
-# Copy the requirements file into the container
-COPY requirements.txt /api/
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    python3-pip \
+    && apt-get clean
 
-COPY seed_data.json /api/
+# Install pipx
+RUN pip install pipx && pipx ensurepath
 
-# Install the dependencies
-RUN pip install --no-cache-dir -r /api/requirements.txt
+# Install Poetry using pipx
+RUN pipx install poetry
 
-# Copy the update and watch scripts into the container
-COPY update_packages.sh /api/update_packages.sh
-COPY watch_requirements.sh /api/watch_requirements.sh
+# Add Poetry to PATH (this ensures the Poetry binary is in the PATH)
+ENV PATH="/root/.local/bin:$PATH"
 
-# Make the scripts executable
-RUN chmod +x /api/update_packages.sh /api/watch_requirements.sh
+# Copy project files
+COPY pyproject.toml poetry.lock ./
 
-# Expose the port on which the app will run
-EXPOSE 8000
+# Install project dependencies
+RUN poetry config virtualenvs.create false && poetry install --no-dev
 
-WORKDIR /api
+# Copy the rest of the application files
+COPY . .
 
-# Command to run the watch script
-CMD ["./watch_requirements.sh"]
+# Set the working directory to /app/src
+WORKDIR /app
+
+# Command to run the application
+CMD ["poetry", "run", "fastapi", "run", "src/main.py"]
