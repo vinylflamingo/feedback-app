@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   api:
+    image: ${DOCKER_USERNAME}/vinylflamingo-feeback-api:latest
     environment:
       - ENV=production
     ports:
