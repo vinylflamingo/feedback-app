@@ -6,7 +6,7 @@ require('dotenv').config();
 
 async function generateRoutes() {
   const tokenLifetime = 5;
-  const baseUrl = process.env.API_URL || "http://localhost:8000"; // Use HTTP instead of HTTPS
+  const baseUrl = process.env.BASE_URL || "http://localhost:8000"; // Use HTTP instead of HTTPS
 
   const apiClient = axios.create({
     baseURL: baseUrl,
