@@ -43,8 +43,8 @@ jobs:
           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> ./api/.env
           echo "POSTGRES_PORT=5432" >> ./api/.env
           echo "DEV_MODE=False" >> ./api/.env
-          echo "SEED_DATA=False" >> ./api/.env
-          echo "DEFAULT_RESPONSE_LIMIT=50" >> ./api/.env
+          echo "SEED_DATA=True" >> ./api/.env
+          echo "DEFAULT_RESPONSE_LIMIT=20" >> ./api/.env
           echo "PYTHONUNBUFFERED=1" >> ./api/.env
 
       - name: Build and push Docker image
