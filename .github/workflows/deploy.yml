@@ -55,7 +55,7 @@ jobs:
       - name: Setup SSH key
         run: |
             mkdir -p ~/.ssh
-            echo "${{ secrets.DIGITALOCEAN_SSH_KEY }}" > ~/.ssh/id_rsa
+            echo "${{ secrets.DIGITALOCEAN_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
 
       - name: Add DigitalOcean to known_hosts
@@ -64,7 +64,7 @@ jobs:
 
       - name: Deploy to DigitalOcean
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.DIGITALOCEAN_SSH_KEY }}
+          SSH_PRIVATE_KEY: ~/.ssh/id_rsa
         run: |
-          scp -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ./docker-compose.yml ./docker-compose.prod.yml ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_HOST }}:/opt/vinylflamingo
+          scp -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ./api/docker-compose.yml ./api/docker-compose.prod.yml ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_HOST }}:/opt/vinylflamingo
           ssh -o StrictHostKeyChecking=no -i $SSH_PRIVATE_KEY ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_HOST }} "docker pull ${{ secrets.DOCKER_USERNAME }}/vinylflamingo-feeback-api:latest && docker-compose -f /opt/vinylflamingo/docker-compose.yml -f /opt/vinylflamingo/docker-compose.prod.yml up -d --remove-orphans"
