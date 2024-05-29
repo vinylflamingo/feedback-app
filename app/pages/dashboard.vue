@@ -1,8 +1,8 @@
 <template>
-    <div class=""">
+    <div class="">
       <SuggestionListing v-if="suggestions.length" :suggestions="suggestions" />
-      <div v-else class="h-screen w-screen flex items-center justify-center">
-        <LoadingSvg />
+      <div v-else class="flex items-center justify-center">
+        <SuggestionsListingEmpty />
       </div>
       <button v-if="hasMore && !loading" @click="loadMore" class="load-more-button">Load More</button>
       <LoadingSvg v-if="loading" />
@@ -16,6 +16,7 @@
   import { SuggestionApi } from '@/constants/enums';
   import SuggestionListing from '@/components/Dashboard/SuggestionListing.vue';
   import LoadingSvg from '~/components/Elements/LoadingSvg.vue';
+  import SuggestionsListingEmpty from '~/components/Modules/SuggestionsListingEmpty.vue';
   import type { Suggestion } from '@/types';
   
   const suggestions = ref<Suggestion[]>([]);

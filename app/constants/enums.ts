@@ -63,3 +63,17 @@ export enum AuthStatus {
   Unauthorized, 
   Authorized
 }
+
+export enum ButtonColor {
+  PURPLE = "bg-purple", 
+  BLUE = "bg-blue", 
+  DARK_BLUE = "bg-darkerBlue",
+  RED = "bg-red"
+}
+
+export enum ButtonWidth {
+  FIT = "w-fit", 
+  FULL = "w-full",
+  SMALL = 'w-[134px]',
+  LARGE = 'w-[279px]'
+}

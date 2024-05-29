@@ -26,31 +26,29 @@
 <style>
 #layout-container {
   position: relative;
-  overflow: hidden;
+  z-index: 5;
+  overflow-x: hidden;
 }
 
 .background-svg-container {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  z-index: 0;
+  z-index: -5;
 }
 
 .background-svg {
   position: absolute;
-  top: 100px; /* Adjust this value as needed */
   transform: translateX(-50%);
-  opacity: 35%;
+  opacity: 5%;
   filter: blur(200px);
-  z-index: -1; /* Ensure it's behind other content */
+  z-index: -5; /* Ensure it's behind other content */
 }
 
-.small {
-  z-index: 1; /* Ensure these elements are above the background SVG */
-}
+
 
 .spin {
   animation: spin 6s linear infinite;
