@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen w-screen flex items-center justify-center">
+  <div class="w-screen flex items-center justify-center">
     <LoadingSvg />
   </div>
 </template>

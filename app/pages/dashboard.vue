@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen">
+    <div class=""">
       <SuggestionListing v-if="suggestions.length" :suggestions="suggestions" />
       <div v-else class="h-screen w-screen flex items-center justify-center">
         <LoadingSvg />

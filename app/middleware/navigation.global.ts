@@ -1,12 +1,11 @@
-// middleware/auth.global.ts
-
-import { defineNuxtRouteMiddleware, navigateTo } from '#imports'
+import type { RouteLocationNormalized } from 'vue-router';
 import { useNavigationStore } from '~/stores/useNavigationStore'
 
 export default defineNuxtRouteMiddleware((to, from) => {
-    const store = useNavigationStore();
+    addToHistory(to)
+})
 
-    store.addPath(to.fullPath)
-  }
-)
-
+function addToHistory(to: RouteLocationNormalized) {
+  const store = useNavigationStore();
+  store.addPath(to.fullPath)
+}

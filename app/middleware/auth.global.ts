@@ -50,7 +50,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
       return navigateTo('/login');
     }
     
-
     console.log('Token is valid. Proceeding to route.')
 
     if (to.path === '/'){
