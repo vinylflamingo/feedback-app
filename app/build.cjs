@@ -23,8 +23,6 @@ async function generateRoutes() {
     password: process.env.BUILD_ADMIN_PASSWORD,
   };
 
-  console.log(loginData);
-
   try {
     const data = qs.stringify(loginData, { format: 'RFC1738' });
     const response = await apiClient.post('/token', data, {
