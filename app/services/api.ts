@@ -253,7 +253,7 @@ export const readTopSuggestions = async (params?: Record<string, any>): Promise<
 
 export const readAllSuggestions = async (params?: Record<string, any>): Promise<any> => {
   try {
-    const response = await apiClient.get('/suggestions', {
+    const response = await apiClient.get('/all', {
       headers: {
         'Content-Type': 'application/json'
       },

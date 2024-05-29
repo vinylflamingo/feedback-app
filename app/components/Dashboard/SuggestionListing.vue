@@ -1,7 +1,9 @@
 <template>
     <div>
-        <LoadingSvg v-if="loading" />
-        <SuggestionCard v-else v-for="suggestion in suggestions" :suggestion="suggestion" />
+      <div v-if="loading" class="h-screen w-screen flex items-center justify-center">
+        <LoadingSvg />
+      </div>
+        <SuggestionCard v-else v-for="suggestion in props.suggestions" :suggestion="suggestion" />
     </div>
 
 </template>

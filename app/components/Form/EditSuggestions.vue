@@ -7,27 +7,27 @@
         fieldName="title" 
         labelText="Feedback Title" 
         description="Add a short, descriptive headline"
-        :default-value="feedbackData.title"
+        :default-value="props.suggestion.title"
         :input-type="titleType"/>
       <DropdownField 
         fieldName="category" 
         labelText="Category" 
         description="Choose a category for your feedback"
-        :default-value="feedbackData.category"
+        :default-value="props.suggestion.category"
         :options="categoryOptions"
       />
       <DropdownField 
         fieldName="status" 
         labelText="Status" 
         description="Update the status for your feedback"
-        :default-value="feedbackData.status"
+        :default-value="props.suggestion.status"
         :options="statusOptions"
       />
       <MultiLineTextField 
         fieldName="detail" 
         labelText="Feedback Detail" 
         description="Include any specific comments on what should be improved, added, etc."
-        :default-value="feedbackData.detail"
+        :default-value="props.suggestion.detail"
       />
     </div>
   </div>
@@ -50,20 +50,6 @@ const props = defineProps<EditSuggestionFormProps>();
 const titleType = FormTextTypes.TEXT;
 const categoryOptions = Object.values(Category) as string[];
 const statusOptions = Object.values(Status) as string[];
-
-const feedbackData = reactive<Suggestion>({
-  title: props.suggestion.title,
-  detail: props.suggestion.detail,
-  category: props.suggestion.category,
-  status: props.suggestion.status,
-  completed: props.suggestion.completed,
-  id: props.suggestion.id,
-  owner_id: props.suggestion.owner_id,
-  comments: props.suggestion.comments,
-  upvote_count: props.suggestion.upvote_count,
-  archived: props.suggestion.archived
-});
-
 const loading = ref(true);
 
 onMounted(() => {

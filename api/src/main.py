@@ -123,7 +123,7 @@ async def read_users_me(current_user: models.User = Depends(get_current_user)):
     return current_user
 
 
-@app.post("/users/", response_model=schemas.User)
+@app.post("/users", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
@@ -219,7 +219,7 @@ def update_suggestion(
 
 # Get all suggestions
 @app.get(
-    "/suggestions",
+    "/all",
     response_model=List[schemas.Suggestion],
     dependencies=[Depends(oauth2_scheme)],
 )

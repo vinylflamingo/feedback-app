@@ -1,6 +1,9 @@
 <template>
   <div>
-    <NuxtLink :to="`/suggestion/${id}/edit`">Edit</NuxtLink>
+    <div class="flex flex-row justify-between">
+      <Backlink /><Homelink />
+    </div>
+    
     <h1>Suggestion Detail</h1>
     <SuggestionDetail v-if="suggestion" :suggestion="suggestion"/>
     <LoadingSvg v-else/>
@@ -15,6 +18,8 @@ import { SuggestionApi } from '@/constants/enums';
 import type { Suggestion } from '~/types';
 import SuggestionDetail from '~/components/Dashboard/SuggestionDetail.vue';
 import LoadingSvg from '~/components/Elements/LoadingSvg.vue';
+import Backlink from '~/components/Elements/Backlink.vue';
+import Homelink from '~/components/Elements/Homelink.vue';
 
 const route = useRoute();
 const router = useRouter();

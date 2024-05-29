@@ -9,7 +9,7 @@
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
         "static": "node build.cjs",
-        "build": "nuxt build"
+        "build": "BUILD_TIME=true nuxt build"
     },
     "dependencies": {
         "@pinia/nuxt": "^0.5.1",

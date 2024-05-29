@@ -23,4 +23,8 @@ export default defineNuxtConfig({
       BUILD_ADMIN_PASSWORD: process.env.BUILD_ADMIN_PASSWORD,
     },
   },
+  routeRules: {
+    '/': { prerender: true },
+    '/suggestions/**': { prerender: true }
+  }
 });

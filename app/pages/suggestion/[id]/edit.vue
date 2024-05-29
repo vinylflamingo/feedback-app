@@ -1,6 +1,8 @@
 <template>
   <div>
-    <NuxtLink :to="`/suggestion/${id}`"><- Back</NuxtLink>
+    <div class="flex flex-row justify-between">
+      <NuxtLink :to="`/suggestion/${id}`"><- Back</NuxtLink><Homelink />
+    </div>
     <h1>Edit Page</h1>
     <p>The suggestion id is: {{ id }}</p>
     <Base :apiCall="formApiCall" formId="base-form" :suggestionId="id">
@@ -19,6 +21,7 @@ import { SUGGESTION_API_CALLS } from '~/constants/api-calls';
 import { SuggestionApi } from '@/constants/enums';
 import EditSuggestions from '~/components/Form/EditSuggestions.vue';
 import type { Suggestion } from '~/types';
+import Homelink from '~/components/Elements/Homelink.vue';
 
 const route = useRoute();
 const router = useRouter();
