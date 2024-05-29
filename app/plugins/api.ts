@@ -67,7 +67,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     api.enableBuildMode()
     
     console.log("automatic login injected.")
-   // await api.login({username: process.env.BUILD_ADMIN_USERNAME, password: process.env.BUILD_ADMIN_PASSWORD})
+   await api.login({username: process.env.BUILD_ADMIN_USERNAME, password: process.env.BUILD_ADMIN_PASSWORD})
     
   }
 

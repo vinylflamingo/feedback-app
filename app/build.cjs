@@ -6,7 +6,7 @@ require('dotenv').config();
 
 async function generateRoutes() {
   const tokenLifetime = 5;
-  const baseUrl = process.env.BASE_URL || "http://localhost:8000"; // Use HTTP instead of HTTPS
+  const baseUrl = process.env.BASE_URL || "http://localhost:8000";
 
   const apiClient = axios.create({
     baseURL: baseUrl,
@@ -45,7 +45,7 @@ async function generateRoutes() {
 
   let suggestions = [];
   try {
-    const response = await apiClient.get('/suggestions/?limit=10000000', {
+    const response = await apiClient.get('/suggestions?limit=10000000', {
       headers: {
         'Content-Type': 'application/json',
       },

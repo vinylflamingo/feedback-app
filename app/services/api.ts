@@ -51,15 +51,15 @@ export const login = async (formData: Record<string, any>): Promise<void> => {
   const config = useRuntimeConfig()
   const tokenLifetime = parseInt(config.public.TOKEN_LIFETIME || '60')
 
-  console.log('Starting login process')
-  console.log('Received form data:', formData)
+  // console.log('Starting login process')
+  // console.log('Received form data:', formData)
 
   try {
     const data = prepareData(
       { username: formData.username, password: formData.password },
       'application/x-www-form-urlencoded'
     )
-    console.log('Prepared data for API request:', data)
+    // console.log('Prepared data for API request:', data)
 
     const response = await apiClient.post('/token', data, {
       headers: {
@@ -67,34 +67,34 @@ export const login = async (formData: Record<string, any>): Promise<void> => {
       }
     })
 
-    console.log('Received response from API:', response)
+    // console.log('Received response from API:', response)
     
     const token = response.data.access_token
-    console.log('Extracted access token:', token)
+    // console.log('Extracted access token:', token)
 
     const expiresIn = tokenLifetime * 60 // Convert minutes to seconds
-    console.log('Calculated token expiration time in seconds:', expiresIn)
+    // console.log('Calculated token expiration time in seconds:', expiresIn)
 
     authStore.setToken(token)
-    console.log('Token set in auth store')
+    // console.log('Token set in auth store')
 
     tokenCookie.value = token
-    console.log('Token saved in cookie')
+    // console.log('Token saved in cookie')
 
     setAuthToken(token)
-    console.log('Token set in auth headers')
+    // console.log('Token set in auth headers')
 
     const expirationDate = new Date()
     expirationDate.setSeconds(expirationDate.getSeconds() + expiresIn)
-    console.log('Calculated token expiration date:', expirationDate)
+    // console.log('Calculated token expiration date:', expirationDate)
 
     authStore.setTokenExpiration(expirationDate)
-    console.log('Token expiration date set in auth store')
+    // console.log('Token expiration date set in auth store')
 
     tokenExpirationCookie.value = expirationDate.toISOString()
-    console.log('Token expiration date saved in cookie')
+    // console.log('Token expiration date saved in cookie')
     
-    console.log('Login process completed successfully')
+    // console.log('Login process completed successfully')
   } catch (error: any) {
     console.error('Error during login process:', error)
     handleErrors(error)

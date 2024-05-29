@@ -1,19 +1,19 @@
 import { readFileSync } from 'fs';
 import path from 'path';
 
-// function getStaticRoutes() {
-//   try {
-//     console.log("getting routes.")
-//     const filePath = path.resolve(__dirname, './.build/staticRoutes.json');
-//     const fileContent = readFileSync(filePath, 'utf-8');
-//     return JSON.parse(fileContent);
-//   } catch(e){
-//     console.log(e)
-//     return {};
-//   }
-// }
+function getStaticRoutes() {
+  try {
+    console.log("getting routes.")
+    const filePath = path.resolve(__dirname, './.build/staticRoutes.json');
+    const fileContent = readFileSync(filePath, 'utf-8');
+    return JSON.parse(fileContent);
+  } catch(e){
+    console.log(e)
+    return {};
+  }
+}
 
-// const routes = getStaticRoutes();
+const routes = getStaticRoutes();
 
 export default defineNuxtConfig({
   modules: [
@@ -37,5 +37,9 @@ export default defineNuxtConfig({
       BUILD_ADMIN_PASSWORD: process.env.BUILD_ADMIN_PASSWORD,
     },
   },
-  
+  nitro: {
+    prerender: {
+      routes: routes,
+    }
+  }
 });

@@ -19,6 +19,9 @@ const router = useRouter();
 const id = ref<number | null>(null);
 
 const { data: suggestions, error } = await useAsyncData<Suggestion[]>('dashboard-home', async () => {
+  
+
+
   return await SUGGESTION_API_CALLS[SuggestionApi.READ_ALL]({limit: 100});
 });
 if (error.value) {
