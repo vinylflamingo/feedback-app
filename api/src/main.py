@@ -143,209 +143,6 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 
-# Post new suggestions
-@app.post(
-    "/suggestions",
-    response_model=schemas.Suggestion,
-    dependencies=[Depends(oauth2_scheme)],
-)
-def create_suggestion(
-    suggestion: schemas.SuggestionCreate,
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-):
-    current_user = get_current_user(db=db, token=token)
-    return crud.create_suggestion(db=db, suggestion=suggestion, user_id=current_user.id)
-
-
-# Get top suggestions by upvotes
-@app.get(
-    "/top",
-    response_model=List[schemas.Suggestion],
-    dependencies=[Depends(oauth2_scheme)],
-)
-def read_top_suggestions(
-    limit: int = DEFAULT_RESPONSE_LIMIT,
-    include_archived: bool = False,
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-):
-    current_user = get_current_user(db=db, token=token)
-    suggestions = crud.get_top_suggestions(
-        db, limit=limit, include_archived=include_archived
-    )
-    return suggestions
-
-
-# Get single suggestion
-@app.get(
-    "/suggestions/{suggestion_id}",
-    response_model=schemas.Suggestion,
-    dependencies=[Depends(oauth2_scheme)],
-)
-def read_suggestion(
-    suggestion_id: int,
-    include_archived: bool = False,
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-):
-    current_user = get_current_user(db=db, token=token)
-    db_suggestion = crud.get_suggestion(
-        db, suggestion_id=suggestion_id, include_archived=include_archived
-    )
-    if not db_suggestion:
-        raise HTTPException(status_code=404, detail="Suggestion not found")
-    return db_suggestion
-
-
-# Edit existing suggestions
-@app.put(
-    "/suggestions/{suggestion_id}",
-    response_model=schemas.Suggestion,
-    dependencies=[Depends(oauth2_scheme)],
-)
-def update_suggestion(
-    suggestion_id: int,
-    suggestion: schemas.SuggestionUpdate,
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-):
-    current_user = get_current_user(db=db, token=token)
-    db_suggestion = crud.get_suggestion(db, suggestion_id=suggestion_id)
-    if not db_suggestion:
-        raise HTTPException(status_code=404, detail="Suggestion not found")
-    if db_suggestion.owner_id != current_user.id and current_user.role != "admin":
-        raise HTTPException(
-            status_code=403, detail="Not authorized to update this suggestion"
-        )
-    updated_suggestion = crud.update_suggestion(
-        db,
-        suggestion_id=suggestion_id,
-        suggestion_update=suggestion,
-        current_user=current_user,
-    )
-    if not updated_suggestion:
-        raise HTTPException(status_code=404, detail="Suggestion not found")
-    return updated_suggestion
-
-
-# Get all suggestions
-@app.get(
-    "/all",
-    response_model=List[schemas.Suggestion],
-    dependencies=[Depends(oauth2_scheme)],
-)
-def read_suggestions(
-    skip: int = 0,
-    limit: int = DEFAULT_RESPONSE_LIMIT,
-    include_archived: bool = False,
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-):
-    current_user = get_current_user(db=db, token=token)
-    suggestions = crud.get_all_suggestions(
-        db, skip=skip, limit=limit, include_archived=include_archived
-    )
-    return suggestions
-
-
-# Get suggestions by category
-@app.get(
-    "/suggestions/category/{category}",
-    response_model=List[schemas.Suggestion],
-    dependencies=[Depends(oauth2_scheme)],
-)
-def read_suggestions_by_category(
-    category: str,
-    skip: int = 0,
-    include_archived: bool = False,
-    limit: int = DEFAULT_RESPONSE_LIMIT,
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-):
-    current_user = get_current_user(db=db, token=token)
-    suggestions = crud.get_suggestions_by_category(
-        db, category=category, skip=skip, limit=limit, include_archived=include_archived
-    )
-    return suggestions
-
-
-# Get suggestions by status
-@app.get(
-    "/suggestions/status/{status}",
-    response_model=List[schemas.Suggestion],
-    dependencies=[Depends(oauth2_scheme)],
-)
-def read_suggestions_by_status(
-    status: str,
-    skip: int = 0,
-    include_archived: bool = False,
-    limit: int = DEFAULT_RESPONSE_LIMIT,
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-):
-    current_user = get_current_user(db=db, token=token)
-    suggestions = crud.get_suggestions_by_status(
-        db, status=status, skip=skip, limit=limit, include_archived=include_archived
-    )
-    return suggestions
-
-
-# Submit an upvote
-@app.post(
-    "/suggestions/{suggestion_id}/upvote",
-    response_model=schemas.Upvote,
-    dependencies=[Depends(oauth2_scheme)],
-)
-def upvote_suggestion(
-    suggestion_id: int,
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-):
-    current_user = get_current_user(db=db, token=token)
-    upvote = crud.submit_upvote(
-        db, suggestion_id=suggestion_id, user_id=current_user.id
-    )
-    return upvote
-
-
-# Toggle an upvote
-@app.post(
-    "/suggestions/{suggestion_id}/toggle_upvote",
-    response_model=schemas.Upvote,
-    dependencies=[Depends(oauth2_scheme)],
-)
-def toggle_upvote(
-    suggestion_id: int,
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-):
-    current_user = get_current_user(db=db, token=token)
-    upvote = crud.toggle_upvote(
-        db, suggestion_id=suggestion_id, user_id=current_user.id
-    )
-    return upvote
-
-
-# Get comments by suggestion
-@app.get(
-    "/suggestions/{suggestion_id}/comments",
-    response_model=List[schemas.Comment],
-    dependencies=[Depends(oauth2_scheme)],
-)
-def read_comments_by_suggestion(
-    suggestion_id: int,
-    include_archived: bool = False,
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme),
-):
-    current_user = get_current_user(db=db, token=token)
-    comments = crud.get_comments_by_suggestion(
-        db, suggestion_id=suggestion_id, include_archived=include_archived
-    )
-    return comments
-
-
 # Submit an comment
 @app.post(
     "/suggestions/{suggestion_id}/comments",
@@ -365,14 +162,8 @@ def create_comment(
     return comment
 
 
-########## v2
-
-
-# Updated routes in main.py
-
-
 # Simplified upvote route
-@app.post("/v2/upvote/{suggestion_id}")
+@app.post("/upvote/{suggestion_id}")
 def toggle_upvote(
     suggestion_id: int,
     current_user: schemas.User = Depends(get_current_user),
@@ -399,7 +190,7 @@ def toggle_upvote(
 
 
 # Updated routes in main.py
-@app.get("/v2/suggestion-counts")
+@app.get("/suggestion-counts")
 def suggestion_counts(
     categories: List[str] = Query([]),
     statuses: List[str] = Query([]),
@@ -413,7 +204,7 @@ def suggestion_counts(
 
 # Get suggestions (all, by id, top, by category, by status)
 @app.get(
-    "/v2/suggestions",
+    "/suggestions",
     response_model=List[schemas.Suggestion],
     dependencies=[Depends(oauth2_scheme)],
 )
@@ -436,7 +227,7 @@ def read_suggestions(
         current_user = (
             None  # only need this if we are looking for suggestions by a specific user.
         )
-    suggestions = crud.get_suggestionsV2(
+    suggestions = crud.get_suggestions(
         db=db,
         suggestion_id=suggestion_id,
         limit=limit,
@@ -453,7 +244,7 @@ def read_suggestions(
 
 # Post new suggestions
 @app.post(
-    "/v2/suggestions",
+    "/suggestions",
     response_model=schemas.Suggestion,
     dependencies=[Depends(oauth2_scheme)],
 )
@@ -463,14 +254,12 @@ def create_suggestion(
     token: str = Depends(oauth2_scheme),
 ):
     current_user = get_current_user(db=db, token=token)
-    return crud.create_suggestionV2(
-        db=db, suggestion=suggestion, user_id=current_user.id
-    )
+    return crud.create_suggestion(db=db, suggestion=suggestion, user_id=current_user.id)
 
 
 # Edit existing suggestions
 @app.put(
-    "/v2/suggestions",
+    "/suggestions",
     response_model=schemas.Suggestion,
     dependencies=[Depends(oauth2_scheme)],
 )
@@ -481,7 +270,7 @@ def update_suggestion(
     token: str = Depends(oauth2_scheme),
 ):
     current_user = get_current_user(db=db, token=token)
-    updated_suggestion = crud.update_suggestionV2(
+    updated_suggestion = crud.update_suggestion(
         db=db,
         suggestion_id=suggestion_id,
         suggestion_update=suggestion,

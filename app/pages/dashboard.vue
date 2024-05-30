@@ -27,7 +27,7 @@
   const loading = ref<boolean>(false);
   
   const { data, error } = await useAsyncData<Suggestion[]>('dashboard-home', async () => {
-    return await SUGGESTION_API_CALLS[SuggestionApi.READ_SUGGESTIONS_V2]({ limit: limit, skip:0, sort: "latest" });
+    return await SUGGESTION_API_CALLS[SuggestionApi.READ_SUGGESTIONS]({ limit: limit, skip:0, sort: "latest" });
   });
   
   if (error.value) {
@@ -42,7 +42,7 @@
     let sleepToAnimate: void = await new Promise(r => setTimeout(() => r(), Math.floor(Math.random() * 700) + 1));
     try {
       const limitPlus = limit + 1
-      const response: Suggestion[] = await SUGGESTION_API_CALLS[SuggestionApi.READ_SUGGESTIONS_V2]({ limit: limitPlus, skip: currentSkip, sort: "latest" });
+      const response: Suggestion[] = await SUGGESTION_API_CALLS[SuggestionApi.READ_SUGGESTIONS]({ limit: limitPlus, skip: currentSkip, sort: "latest" });
       let mutated = response;
       if (response.length > limit) {
         hasMore.value = true;

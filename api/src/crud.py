@@ -350,9 +350,7 @@ def get_suggestion_counts(
 
 
 # Create a new suggestion
-def create_suggestionV2(
-    db: Session, suggestion: schemas.SuggestionCreate, user_id: int
-):
+def create_suggestion(db: Session, suggestion: schemas.SuggestionCreate, user_id: int):
     db_suggestion = models.Suggestion(**suggestion.model_dump(), owner_id=user_id)
     db.add(db_suggestion)
     db.commit()
@@ -360,7 +358,7 @@ def create_suggestionV2(
     return db_suggestion
 
 
-def get_suggestionsV2(
+def get_suggestions(
     db: Session,
     suggestion_id: Optional[int] = None,
     limit: int = 10,
@@ -404,7 +402,7 @@ def get_suggestionsV2(
 
 
 # Update an existing suggestion
-def update_suggestionV2(
+def update_suggestion(
     db: Session,
     suggestion_id: int,
     suggestion_update: schemas.SuggestionUpdate,

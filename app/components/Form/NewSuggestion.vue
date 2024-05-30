@@ -26,6 +26,5 @@
   import DropdownField from '@/components/Elements/DropdownField.vue';  
   import MultiLineTextField from '../Elements/MultiLineTextField.vue';
   const titleType = FormTextTypes.TEXT;
-  // Convert Category enum to array
   const categoryOptions = Object.values(Category) as string[];
   </script>

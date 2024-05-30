@@ -32,7 +32,7 @@ const { data: suggestion, error } = await useAsyncData<Suggestion>('suggestion',
     throw new Error('Invalid ID');
   }
   id.value = newId;
-  return await SUGGESTION_API_CALLS[SuggestionApi.READ_SUGGESTIONS_V2]({ suggestion_id: id.value});
+  return await SUGGESTION_API_CALLS[SuggestionApi.READ_SUGGESTIONS]({ suggestion_id: id.value});
 });
 
 if (error.value) {

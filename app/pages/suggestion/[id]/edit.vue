@@ -26,7 +26,7 @@ import Homelink from '~/components/Elements/Homelink.vue';
 const route = useRoute();
 const router = useRouter();
 const id = ref<number | null>(null);
-const formApiCall = SUGGESTION_API_CALLS[SuggestionApi.UPDATE_SUGGESTION_V2];
+const formApiCall = SUGGESTION_API_CALLS[SuggestionApi.UPDATE_SUGGESTION];
 
 const fetchSuggestion = async (suggestionId: number) => {
   if (isNaN(suggestionId) || suggestionId === null || suggestionId === undefined) {
@@ -34,7 +34,7 @@ const fetchSuggestion = async (suggestionId: number) => {
     throw new Error('Invalid ID');
   }
   id.value = suggestionId;
-  return await SUGGESTION_API_CALLS[SuggestionApi.READ_SUGGESTIONS_V2]({suggestion_id: id.value, });
+  return await SUGGESTION_API_CALLS[SuggestionApi.READ_SUGGESTIONS]({suggestion_id: id.value, });
 };
 
 // Set the id immediately

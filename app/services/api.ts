@@ -66,35 +66,17 @@ export const login = async (formData: Record<string, any>): Promise<void> => {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
-
-    // console.log('Received response from API:', response)
     
     const token = response.data.access_token
-    // console.log('Extracted access token:', token)
-
     const expiresIn = tokenLifetime * 60 // Convert minutes to seconds
-    // console.log('Calculated token expiration time in seconds:', expiresIn)
-
     authStore.setToken(token)
-    // console.log('Token set in auth store')
-
+    authStore.setUserId(response.data.user_id)
     tokenCookie.value = token
-    // console.log('Token saved in cookie')
-
     setAuthToken(token)
-    // console.log('Token set in auth headers')
-
     const expirationDate = new Date()
     expirationDate.setSeconds(expirationDate.getSeconds() + expiresIn)
-    // console.log('Calculated token expiration date:', expirationDate)
-
     authStore.setTokenExpiration(expirationDate)
-    // console.log('Token expiration date set in auth store')
-
     tokenExpirationCookie.value = expirationDate.toISOString()
-    // console.log('Token expiration date saved in cookie')
-    
-    // console.log('Login process completed successfully')
   } catch (error: any) {
     console.error('Error during login process:', error)
     handleErrors(error)
@@ -173,137 +155,6 @@ export const createUser = async (formData: Record<string, any>): Promise<void> =
   }
 }
 
-export const createSuggestion = async (formData: Record<string, any>): Promise<number> => {
-  try {
-    formData.status = 'Suggestion'
-    formData.completed = false
-    const response = await apiClient.post('/suggestions', formData, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    if (response.status === 200 && response.data.id) {
-      return response.data.id
-    } else {
-      return NaN
-    }
-  } catch (error: any) {
-    handleErrors(error)
-    throw new Error('Failed to create suggestion')
-  }
-}
-
-export const updateSuggestion = async (
-  suggestionId: number,
-  formData: Record<string, any>
-): Promise<number> => {
-  try {
-    const response = await apiClient.put(
-      `/suggestions/${suggestionId}`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    )
-    if (response.status === 200 && response.data.id) {
-      return response.data.id
-    } else {
-      return NaN
-    }
-  } catch (error: any) {
-    handleErrors(error)
-    throw new Error('Failed to update suggestion')
-  }
-}
-
-export const getSuggestion = async (suggestionId: number): Promise<Suggestion | null> => {
-  try {
-    const response = await apiClient.get(`/suggestions/${suggestionId}`, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    if (response.status === 200 && response.data) {
-      return response.data
-    } else {
-      return null
-    }
-  } catch (error: any) {
-    handleErrors(error)
-    throw new Error('Failed to fetch suggestion')
-  }
-}
-
-export const readTopSuggestions = async (params?: Record<string, any>): Promise<any> => {
-  try {
-    const response = await apiClient.get('/top', {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      params
-    })
-    return response.data
-  } catch (error: any) {
-    handleErrors(error)
-    throw new Error('Failed to read top suggestions')
-  }
-}
-
-export const readAllSuggestions = async (params?: Record<string, any>): Promise<any> => {
-  try {
-    const response = await apiClient.get('/all', {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      params
-    })
-    return response.data
-  } catch (error: any) {
-    handleErrors(error)
-    throw new Error('Failed to read all suggestions')
-  }
-}
-
-export const readSuggestionsByCategory = async (
-  category: string,
-  params?: Record<string, any>
-): Promise<any> => {
-  try {
-    const response = await apiClient.get(
-      `/suggestions/category/${category}`,
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        params
-      }
-    )
-    return response.data
-  } catch (error: any) {
-    handleErrors(error)
-    throw new Error('Failed to read suggestions by category')
-  }
-}
-
-export const readSuggestionsByStatus = async (
-  status: string,
-  params?: Record<string, any>
-): Promise<any> => {
-  try {
-    const response = await apiClient.get(`/suggestions/status/${status}`, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      params
-    })
-    return response.data
-  } catch (error: any) {
-    handleErrors(error)
-    throw new Error('Failed to read suggestions by status')
-  }
-}
 
 export const addComment = async (
   suggestionId: number,
@@ -343,44 +194,20 @@ export const addChildComment = async (
   }
 }
 
-export const readCommentsBySuggestion = async (
-  suggestionId: number,
-  params?: Record<string, any>
-): Promise<any> => {
-  try {
-    const response = await apiClient.get(
-      `/suggestions/${suggestionId}/comments`,
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        params
-      }
-    )
-    return response.data
-  } catch (error: any) {
-    handleErrors(error)
-    throw new Error('Failed to read comments by suggestion')
-  }
-}
-
 export const upvoteSuggestion = async (suggestionId: number): Promise<void> => {
   try {
-    await apiClient.post(`/suggestions/${suggestionId}/upvote`)
+    await apiClient.post(`/upvote/${suggestionId}`)
   } catch (error: any) {
     handleErrors(error)
     throw new Error('Failed to upvote suggestion')
   }
 }
 
-
-
-export const createSuggestionV2 = async (formData: Record<string, any>): Promise<number> => {
-  console.log("using v2 api")
+export const createSuggestion = async (formData: Record<string, any>): Promise<number> => {
   try {
     formData.status = 'Suggestion'
     formData.completed = false
-    const response = await apiClient.post('/v2/suggestions', formData, {
+    const response = await apiClient.post('/suggestions', formData, {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -396,14 +223,13 @@ export const createSuggestionV2 = async (formData: Record<string, any>): Promise
   }
 }
 
-export const updateSuggestionV2 = async (
+export const updateSuggestion = async (
   suggestionId: number,
   formData: Record<string, any>
 ): Promise<number> => {
-  console.log("using v2 api")
   try {
     const response = await apiClient.put(
-      `/v2/suggestions?suggestion_id=${suggestionId}`,
+      `/suggestions?suggestion_id=${suggestionId}`,
       formData,
       {
         headers: {
@@ -422,11 +248,9 @@ export const updateSuggestionV2 = async (
   }
 }
 
-export const readSuggestionsV2 = async (params?: Record<string, any>): Promise<any> => {
-  console.log("using v2 api")
-  console.log(params)
+export const readSuggestions = async (params?: Record<string, any>): Promise<any> => {
   try {
-    const response = await apiClient.get('/v2/suggestions', {
+    const response = await apiClient.get('/suggestions', {
       headers: {
         'Content-Type': 'application/json'
       },
@@ -449,20 +273,12 @@ export default {
   refreshAuthToken,
   clearToken,
   createUser,
-  createSuggestion,
-  updateSuggestion,
-  getSuggestion,
-  readTopSuggestions,
-  readAllSuggestions,
-  readSuggestionsByCategory,
-  readSuggestionsByStatus,
   addComment,
   addChildComment,
-  readCommentsBySuggestion,
   upvoteSuggestion,
   TOKEN_COOKIE,
   TOKEN_EXPIRATION_COOKIE,
-  createSuggestionV2,
-  updateSuggestionV2,
-  readSuggestionsV2
+  createSuggestion,
+  updateSuggestion,
+  readSuggestions
 }
