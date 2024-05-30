@@ -71,6 +71,11 @@ if SEED_DATA == "True":
     seed_data()
 
 
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+
 @app.post("/token", response_model=schemas.Token)
 def login_for_access_token(
     db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()

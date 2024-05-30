@@ -30,15 +30,14 @@ COPY . .
 # Set the working directory to /app/src
 WORKDIR /app
 
-
 # Development stage (default)
 FROM base AS development
-CMD ["poetry", "run", "fastapi", "dev", "src/main.py"]
+EXPOSE 8000
+CMD ["poetry", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
 # Production stage
 FROM base AS production
-CMD ["poetry", "run", "fastapi", "run", "src/main.py"]
+CMD ["poetry", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 # Default stage to be built if no target is specified
 FROM development AS default
-
