@@ -23,8 +23,8 @@ from typing import List, Dict, Any
 
 load_dotenv()
 
-DEV_MODE = os.getenv("DEV_MODE")
-SEED_DATA = os.getenv("SEED_DATA")
+DEV_MODE = os.getenv("DEV_MODE") or False
+SEED_DATA = os.getenv("SEED_DATA") or False
 DEFAULT_RESPONSE_LIMIT = int(
     10
     if os.getenv("DEFAULT_RESPONSE_LIMIT") is None
@@ -80,7 +80,7 @@ if SEED_DATA == "True":
 def login_for_access_token(
     db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ):
-    if DEV_MODE:
+    if DEV_MODE == "True":
         user = db.query(models.User).filter(models.User.username == "dev_user").first()
         if not user:
             raise HTTPException(
