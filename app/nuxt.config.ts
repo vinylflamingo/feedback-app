@@ -1,5 +1,3 @@
-import { readFileSync } from 'fs';
-import path from 'path';
 
 export default defineNuxtConfig({
   modules: [
@@ -23,8 +21,4 @@ export default defineNuxtConfig({
       BUILD_ADMIN_PASSWORD: process.env.BUILD_ADMIN_PASSWORD,
     },
   },
-  routeRules: {
-    '/': { prerender: true },
-    '/suggestions/**': { prerender: true }
-  }
 });
