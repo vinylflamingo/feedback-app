@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Query, Request
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 import math
 
 
@@ -30,6 +30,7 @@ DEFAULT_RESPONSE_LIMIT = int(
     if os.getenv("DEFAULT_RESPONSE_LIMIT") is None
     else os.getenv("DEFAULT_RESPONSE_LIMIT")
 )
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")) or 30
 
 
 print("ENVIRONMENT VARIABLES")
@@ -94,11 +95,16 @@ def login_for_access_token(
                 detail="Incorrect username or password",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-    access_token_expires = timedelta(minutes=60)
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user_id": user.id,
+        "username": user.username,
+    }
 
 
 @app.post("/refresh_token", response_model=schemas.Token)
@@ -112,11 +118,16 @@ async def refresh_token(
             detail="Invalid token",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes=60)
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": current_user.username}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user_id": current_user.id,
+        "username": current_user.username,
+    }
 
 
 @app.get("/users/me", response_model=schemas.User)
@@ -360,36 +371,6 @@ def create_comment(
 # Updated routes in main.py
 
 
-@app.api_route("/v2/suggestions", methods=["GET", "POST", "PUT"])
-def suggestions(
-    request: Request,
-    suggestion_id: int = Query(None),
-    skip: int = Query(0),
-    limit: int = Query(DEFAULT_RESPONSE_LIMIT),
-    include_archived: bool = Query(False),
-    category: str = Query(None),
-    status: str = Query(None),
-    top: bool = Query(False),
-    suggestion_data: schemas.SuggestionCreate = None,
-    current_user: schemas.User = Depends(get_current_user),
-    db: Session = Depends(get_db),
-):
-    method = request.method
-    return crud.manage_suggestions(
-        db=db,
-        suggestion_id=suggestion_id,
-        skip=skip,
-        limit=limit,
-        include_archived=include_archived,
-        category=category,
-        status=status,
-        top=top,
-        suggestion_data=suggestion_data,
-        current_user=current_user,
-        method=method,
-    )
-
-
 # Simplified upvote route
 @app.post("/v2/upvote/{suggestion_id}")
 def toggle_upvote(
@@ -430,3 +411,80 @@ def suggestion_counts(
     return crud.get_suggestion_counts(
         db=db, categories=categories, statuses=statuses, upvotes=upvotes
     )
+
+
+# Get suggestions (all, by id, top, by category, by status)
+@app.get(
+    "/v2/suggestions",
+    response_model=List[schemas.Suggestion],
+    dependencies=[Depends(oauth2_scheme)],
+)
+def read_suggestions(
+    suggestion_id: Optional[int] = None,
+    limit: int = Query(10, alias="limit"),
+    include_archived: bool = False,
+    skip: int = 0,
+    top: bool = False,
+    category: Optional[str] = None,
+    status: Optional[str] = None,
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
+    user: bool = False,
+):
+    if user == True:
+        current_user = get_current_user(db=db, token=token)
+    else:
+        current_user = None
+    suggestions = crud.get_suggestionsV2(
+        db=db,
+        suggestion_id=suggestion_id,
+        limit=limit,
+        include_archived=include_archived,
+        skip=skip,
+        top=top,
+        category=category,
+        status=status,
+        user=current_user,
+    )
+    return suggestions
+
+
+# Post new suggestions
+@app.post(
+    "/v2/suggestions",
+    response_model=schemas.Suggestion,
+    dependencies=[Depends(oauth2_scheme)],
+)
+def create_suggestion(
+    suggestion: schemas.SuggestionCreate,
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
+):
+    current_user = get_current_user(db=db, token=token)
+    return crud.create_suggestionV2(
+        db=db, suggestion=suggestion, user_id=current_user.id
+    )
+
+
+# Edit existing suggestions
+@app.put(
+    "/v2/suggestions",
+    response_model=schemas.Suggestion,
+    dependencies=[Depends(oauth2_scheme)],
+)
+def update_suggestion(
+    suggestion_id: int,
+    suggestion: schemas.SuggestionUpdate,
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
+):
+    current_user = get_current_user(db=db, token=token)
+    updated_suggestion = crud.update_suggestionV2(
+        db=db,
+        suggestion_id=suggestion_id,
+        suggestion_update=suggestion,
+        current_user=current_user,
+    )
+    if not updated_suggestion:
+        raise HTTPException(status_code=404, detail="Suggestion not found")
+    return updated_suggestion

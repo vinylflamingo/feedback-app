@@ -7,6 +7,8 @@ from datetime import datetime
 class Token(BaseModel):
     access_token: str
     token_type: str
+    user_id: int
+    username: str
 
 
 class TokenData(BaseModel):
@@ -51,6 +53,7 @@ class SuggestionUpdate(BaseModel):
     category: Optional[str] = None
     status: Optional[str] = None
     completed: Optional[bool] = None
+    archived: Optional[bool] = None
 
     class Config:
         orm_mode = True
@@ -88,6 +91,7 @@ class UserBase(BaseModel):
     first_name: str
     last_name: str
     email: str
+    role: str
 
 
 class UserCreate(UserBase):

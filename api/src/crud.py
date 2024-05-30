@@ -3,7 +3,8 @@ from sqlalchemy import func
 import os
 from . import models, schemas
 from .models import User
-from typing import List
+from typing import List, Optional
+from fastapi import HTTPException
 
 DEFAULT_RESPONSE_LIMIT = int(
     10
@@ -298,8 +299,8 @@ def archive_comment(db: Session, comment_id: int, current_user: User):
         if not comment:
             return {"error": "Comment not found"}
 
-        if current_user.role != "admin":
-            return {"error": "You do not have permission to update the archive field"}
+        if comment.user_id != current_user.id and current_user.role != "admin":
+            return {"error": "Not authorized to archive this comment"}
 
         comment.archived = True
         db.commit()
@@ -308,63 +309,6 @@ def archive_comment(db: Session, comment_id: int, current_user: User):
     except Exception as e:
         db.rollback()
         return {"error": str(e)}
-
-
-def manage_suggestions(
-    db: Session,
-    suggestion_id: int = None,
-    skip: int = 0,
-    limit: int = DEFAULT_RESPONSE_LIMIT,
-    include_archived: bool = False,
-    category: str = None,
-    status: str = None,
-    top: bool = False,
-    suggestion_data: schemas.SuggestionCreate = None,
-    current_user: schemas.User = None,
-    method: str = "GET",
-):
-    query = db.query(models.Suggestion)
-
-    if suggestion_id:
-        query = query.filter(models.Suggestion.id == suggestion_id)
-
-    if not include_archived:
-        query = query.filter(models.Suggestion.archived == False)
-
-    if category:
-        query = query.filter(models.Suggestion.category == category)
-
-    if status:
-        query = query.filter(models.Suggestion.status == status)
-
-    if top:
-        return query.order_by(models.Suggestion.upvotes.desc()).limit(limit).all()
-
-    if method == "GET":
-        return query.offset(skip).limit(limit).all()
-
-    if method == "POST" and suggestion_data:
-        db_suggestion = models.Suggestion(
-            **suggestion_data.model_dump(), owner_id=current_user.id
-        )
-        db.add(db_suggestion)
-        db.commit()
-        db.refresh(db_suggestion)
-        return db_suggestion
-
-    if method == "PUT" and suggestion_data:
-        db_suggestion = query.first()
-        if db_suggestion:
-            for key, value in suggestion_data.dict().items():
-                setattr(db_suggestion, key, value)
-            db.commit()
-            db.refresh(db_suggestion)
-        return db_suggestion
-
-    return query.first()
-
-
-# Updated CRUD functions in crud.py
 
 
 def get_suggestion_counts(
@@ -403,3 +347,81 @@ def get_suggestion_counts(
             )
 
     return counts
+
+
+# Create a new suggestion
+def create_suggestionV2(
+    db: Session, suggestion: schemas.SuggestionCreate, user_id: int
+):
+    db_suggestion = models.Suggestion(**suggestion.dict(), owner_id=user_id)
+    db.add(db_suggestion)
+    db.commit()
+    db.refresh(db_suggestion)
+    return db_suggestion
+
+
+def get_suggestionsV2(
+    db: Session,
+    suggestion_id: Optional[int] = None,
+    limit: int = 10,
+    include_archived: bool = False,
+    skip: int = 0,
+    top: bool = False,
+    category: Optional[str] = None,
+    status: Optional[str] = None,
+    user: Optional[User] = None,
+) -> List[models.Suggestion]:
+    query = db.query(models.Suggestion)
+
+    if user is not None:
+        query = query.filter(models.Suggestion.owner_id == user.id)
+
+    if suggestion_id is not None:
+        query = query.filter(models.Suggestion.id == suggestion_id)
+
+    if not include_archived:
+        query = query.filter(models.Suggestion.archived == False)
+
+    if category:
+        query = query.filter(models.Suggestion.category == category)
+
+    if status:
+        query = query.filter(models.Suggestion.status == status)
+
+    if top:
+        query = (
+            query.outerjoin(models.Upvote)
+            .group_by(models.Suggestion.id)
+            .order_by(func.count(models.Upvote.id).desc())
+        )
+
+    return query.offset(skip).limit(limit).all()
+
+
+# Update an existing suggestion
+def update_suggestionV2(
+    db: Session,
+    suggestion_id: int,
+    suggestion_update: schemas.SuggestionUpdate,
+    current_user: models.User,
+):
+    db_suggestion = (
+        db.query(models.Suggestion)
+        .filter(models.Suggestion.id == suggestion_id)
+        .first()
+    )
+
+    if not db_suggestion:
+        return None
+
+    if db_suggestion.owner_id != current_user.id and current_user.role != "admin":
+        raise HTTPException(
+            status_code=403, detail="Not authorized to update this suggestion"
+        )
+
+    for key, value in suggestion_update.model_dump(exclude_unset=True).items():
+        setattr(db_suggestion, key, value)
+
+    db.commit()
+    db.refresh(db_suggestion)
+    return db_suggestion
