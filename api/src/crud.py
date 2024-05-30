@@ -3,7 +3,7 @@ from sqlalchemy import func
 import os
 from . import models, schemas
 from .models import User
-
+from typing import List
 
 DEFAULT_RESPONSE_LIMIT = int(
     10
@@ -308,3 +308,98 @@ def archive_comment(db: Session, comment_id: int, current_user: User):
     except Exception as e:
         db.rollback()
         return {"error": str(e)}
+
+
+def manage_suggestions(
+    db: Session,
+    suggestion_id: int = None,
+    skip: int = 0,
+    limit: int = DEFAULT_RESPONSE_LIMIT,
+    include_archived: bool = False,
+    category: str = None,
+    status: str = None,
+    top: bool = False,
+    suggestion_data: schemas.SuggestionCreate = None,
+    current_user: schemas.User = None,
+    method: str = "GET",
+):
+    query = db.query(models.Suggestion)
+
+    if suggestion_id:
+        query = query.filter(models.Suggestion.id == suggestion_id)
+
+    if not include_archived:
+        query = query.filter(models.Suggestion.archived == False)
+
+    if category:
+        query = query.filter(models.Suggestion.category == category)
+
+    if status:
+        query = query.filter(models.Suggestion.status == status)
+
+    if top:
+        return query.order_by(models.Suggestion.upvotes.desc()).limit(limit).all()
+
+    if method == "GET":
+        return query.offset(skip).limit(limit).all()
+
+    if method == "POST" and suggestion_data:
+        db_suggestion = models.Suggestion(
+            **suggestion_data.model_dump(), owner_id=current_user.id
+        )
+        db.add(db_suggestion)
+        db.commit()
+        db.refresh(db_suggestion)
+        return db_suggestion
+
+    if method == "PUT" and suggestion_data:
+        db_suggestion = query.first()
+        if db_suggestion:
+            for key, value in suggestion_data.dict().items():
+                setattr(db_suggestion, key, value)
+            db.commit()
+            db.refresh(db_suggestion)
+        return db_suggestion
+
+    return query.first()
+
+
+# Updated CRUD functions in crud.py
+
+
+def get_suggestion_counts(
+    db: Session,
+    categories: List[str] = [],
+    statuses: List[str] = [],
+    upvotes: List[int] = [],
+):
+    counts = {}
+
+    if categories:
+        for category in categories:
+            counts[f"category_{category}"] = (
+                db.query(models.Suggestion)
+                .filter(models.Suggestion.category == category)
+                .count()
+            )
+
+    if statuses:
+        for status in statuses:
+            counts[f"status_{status}"] = (
+                db.query(models.Suggestion)
+                .filter(models.Suggestion.status == status)
+                .count()
+            )
+
+    if upvotes:
+        for suggestion_id in upvotes:
+            counts[f"upvote_{suggestion_id}"] = (
+                db.query(models.Upvote)
+                .filter(
+                    models.Upvote.suggestion_id == suggestion_id,
+                    models.Upvote.active == True,
+                )
+                .count()
+            )
+
+    return counts

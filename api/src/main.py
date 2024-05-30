@@ -1,7 +1,8 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Query, Request
 from sqlalchemy.orm import Session
 from typing import List
 import math
+
 
 from src import models, schemas, crud, database
 from src.database import engine, SessionLocal, seed_data
@@ -351,3 +352,81 @@ def create_comment(
         db=db, comment=comment, suggestion_id=suggestion_id, user_id=current_user.id
     )
     return comment
+
+
+########## v2
+
+
+# Updated routes in main.py
+
+
+@app.api_route("/v2/suggestions", methods=["GET", "POST", "PUT"])
+def suggestions(
+    request: Request,
+    suggestion_id: int = Query(None),
+    skip: int = Query(0),
+    limit: int = Query(DEFAULT_RESPONSE_LIMIT),
+    include_archived: bool = Query(False),
+    category: str = Query(None),
+    status: str = Query(None),
+    top: bool = Query(False),
+    suggestion_data: schemas.SuggestionCreate = None,
+    current_user: schemas.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    method = request.method
+    return crud.manage_suggestions(
+        db=db,
+        suggestion_id=suggestion_id,
+        skip=skip,
+        limit=limit,
+        include_archived=include_archived,
+        category=category,
+        status=status,
+        top=top,
+        suggestion_data=suggestion_data,
+        current_user=current_user,
+        method=method,
+    )
+
+
+# Simplified upvote route
+@app.post("/v2/upvote/{suggestion_id}")
+def toggle_upvote(
+    suggestion_id: int,
+    current_user: schemas.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    upvote = (
+        db.query(models.Upvote)
+        .filter(
+            models.Upvote.suggestion_id == suggestion_id,
+            models.Upvote.user_id == current_user.id,
+        )
+        .first()
+    )
+    if upvote:
+        upvote.active = not upvote.active
+    else:
+        upvote = models.Upvote(
+            suggestion_id=suggestion_id, user_id=current_user.id, active=True
+        )
+        db.add(upvote)
+    db.commit()
+    db.refresh(upvote)
+    return upvote
+
+
+# Updated routes in main.py
+
+
+@app.get("/v2/suggestion-counts")
+def suggestion_counts(
+    categories: List[str] = Query([]),
+    statuses: List[str] = Query([]),
+    upvotes: List[int] = Query([]),
+    db: Session = Depends(get_db),
+):
+    return crud.get_suggestion_counts(
+        db=db, categories=categories, statuses=statuses, upvotes=upvotes
+    )

@@ -13,7 +13,7 @@
   <script setup lang="ts">
   interface CategoryBubbleProps {
     category: string;
-    active: boolean;
+    active?: boolean;
   }
   
   const props = defineProps<CategoryBubbleProps>();

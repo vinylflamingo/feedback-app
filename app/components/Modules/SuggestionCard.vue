@@ -33,19 +33,15 @@
 
 <script setup lang="ts">
 import type { Suggestion } from '~/types';
-import { useRouter } from 'vue-router';
 import CategoryBubble from '../Elements/CategoryBubble.vue';
 
 const props = defineProps<{ suggestion: Suggestion }>();
-const router = useRouter();
 
 const goToDetailPage = () => {
     navigateTo(`/suggestion/${props.suggestion.id}`);
 };
 
 const toggleUpvote = async () => {
-    // Assuming you have a function to toggle upvote
     console.log("updoot toggled")
-    // Optionally update UI state here if not using Vuex/Pinia
 };
 </script>
