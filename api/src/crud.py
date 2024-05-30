@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, asc, desc
 import os
 from . import models, schemas
 from .models import User
@@ -353,7 +353,7 @@ def get_suggestion_counts(
 def create_suggestionV2(
     db: Session, suggestion: schemas.SuggestionCreate, user_id: int
 ):
-    db_suggestion = models.Suggestion(**suggestion.dict(), owner_id=user_id)
+    db_suggestion = models.Suggestion(**suggestion.model_dump(), owner_id=user_id)
     db.add(db_suggestion)
     db.commit()
     db.refresh(db_suggestion)
@@ -370,6 +370,7 @@ def get_suggestionsV2(
     category: Optional[str] = None,
     status: Optional[str] = None,
     user: Optional[User] = None,
+    sort: Optional[str] = None,
 ) -> List[models.Suggestion]:
     query = db.query(models.Suggestion)
 
@@ -394,6 +395,10 @@ def get_suggestionsV2(
             .group_by(models.Suggestion.id)
             .order_by(func.count(models.Upvote.id).desc())
         )
+    if sort == "latest":
+        query = query.order_by(desc(models.Suggestion.id))
+    elif sort == "oldest":
+        query = query.order_by(asc(models.Suggestion.id))
 
     return query.offset(skip).limit(limit).all()
 

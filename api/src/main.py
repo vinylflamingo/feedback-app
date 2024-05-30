@@ -399,8 +399,6 @@ def toggle_upvote(
 
 
 # Updated routes in main.py
-
-
 @app.get("/v2/suggestion-counts")
 def suggestion_counts(
     categories: List[str] = Query([]),
@@ -430,11 +428,14 @@ def read_suggestions(
     db: Session = Depends(get_db),
     token: str = Depends(oauth2_scheme),
     user: bool = False,
+    sort: str = "latest",
 ):
     if user == True:
         current_user = get_current_user(db=db, token=token)
     else:
-        current_user = None
+        current_user = (
+            None  # only need this if we are looking for suggestions by a specific user.
+        )
     suggestions = crud.get_suggestionsV2(
         db=db,
         suggestion_id=suggestion_id,
@@ -445,6 +446,7 @@ def read_suggestions(
         category=category,
         status=status,
         user=current_user,
+        sort=sort,
     )
     return suggestions
 

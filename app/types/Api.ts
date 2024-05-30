@@ -1,5 +1,3 @@
-// types/api.ts
-
 import type { AxiosInstance } from 'axios';
 import type { Suggestion, Comment } from '../types';
 
@@ -18,6 +16,9 @@ export interface Api {
   upvoteSuggestion(suggestionId: number): Promise<void>;
   readTopSuggestions(params?: Record<string, any>): Promise<any>;
   readAllSuggestions(params?: Record<string, any>): Promise<any>;
+  createSuggestionV2(formData: Record<string, any>): Promise<number>;
+  updateSuggestionV2(suggestionId: number, formData: Record<string, any>): Promise<number>;
+  readSuggestionsV2(params?: Record<string, any>): Promise<any>;
   apiClient: AxiosInstance;
   clearToken(): void;
   setApiClient(client: AxiosInstance): void;

@@ -27,7 +27,7 @@
   const loading = ref<boolean>(false);
   
   const { data, error } = await useAsyncData<Suggestion[]>('dashboard-home', async () => {
-    return await SUGGESTION_API_CALLS[SuggestionApi.READ_ALL]({ limit: limit });
+    return await SUGGESTION_API_CALLS[SuggestionApi.READ_SUGGESTIONS_V2]({ limit: limit, skip:0, sort: "latest" });
   });
   
   if (error.value) {
@@ -37,20 +37,21 @@
     hasMore.value = (data.value?.length ?? 0) === limit;
   }
   
-  // Function to fetch more suggestions
   const fetchSuggestions = async (currentSkip: number): Promise<Suggestion[]> => {
-    console.log("fetching more....")
     loading.value = true;
     let sleepToAnimate: void = await new Promise(r => setTimeout(() => r(), Math.floor(Math.random() * 700) + 1));
     try {
-      const response: Suggestion[] = await SUGGESTION_API_CALLS[SuggestionApi.READ_ALL]({ limit: limit + 1, skip: currentSkip });
-      let mutatedResponse: Suggestion[] = response;
-      if (response.length === 10 + currentSkip + 1) {
+      const limitPlus = limit + 1
+      const response: Suggestion[] = await SUGGESTION_API_CALLS[SuggestionApi.READ_SUGGESTIONS_V2]({ limit: limitPlus, skip: currentSkip, sort: "latest" });
+      let mutated = response;
+      if (response.length > limit) {
         hasMore.value = true;
+        mutated.pop();
+      } else {
+        hasMore.value = false;
       }
       loading.value = false;
-      console.log("mutated", mutatedResponse)
-      return mutatedResponse;
+      return mutated;
     } catch (err) {
       console.error('Failed to load more suggestions data:', err);
       loading.value = false;
@@ -60,13 +61,8 @@
   
   const loadMore = async (): Promise<void> => {
     skip.value += 10
-    const newSuggestions: Suggestion[] = (await fetchSuggestions(skip.value)).slice(0, -1);
-    console.log("Combining suggestion list")
-    console.log(newSuggestions)
-    console.log(suggestions)
+    const newSuggestions: Suggestion[] = (await fetchSuggestions(skip.value));
     suggestions.value = suggestions.value.concat(newSuggestions);
-    console.log("Migrated suggestion list")
-    console.log(suggestions)
   };
   
   </script>

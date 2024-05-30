@@ -1,4 +1,3 @@
-// apiMapping.ts
 import { AuthApi, UserApi, SuggestionApi, CommentApi, UpvoteApi } from './enums';
 import api from '@/services/api';
 
@@ -21,6 +20,9 @@ export const SUGGESTION_API_CALLS: Record<SuggestionApi, ApiFunction> = {
   [SuggestionApi.READ_ALL]: api.readAllSuggestions,
   [SuggestionApi.READ_BY_CATEGORY]: api.readSuggestionsByCategory,
   [SuggestionApi.READ_BY_STATUS]: api.readSuggestionsByStatus,
+  [SuggestionApi.CREATE_SUGGESTION_V2]: api.createSuggestionV2,
+  [SuggestionApi.UPDATE_SUGGESTION_V2]: api.updateSuggestionV2,
+  [SuggestionApi.READ_SUGGESTIONS_V2]: api.readSuggestionsV2,
 };
 
 export const COMMENT_API_CALLS: Record<CommentApi, ApiFunction> = {

@@ -86,8 +86,6 @@ async function checkTokenExpiration(apiClient: any) {
   const timeDifference = (tokenExpiration.getTime() - currentTime.getTime()) / 1000
   const minutesUntilRefresh = Math.ceil(timeDifference / 60) // Ceil to account for partial minutes
 
-  console.log("refresh token activates in", minutesUntilRefresh, "minutes")
-
   if (timeDifference > 0 && timeDifference <= tokenRefreshMargin && !isRefreshing) {
     isRefreshing = true
     console.log('Refreshing token...')

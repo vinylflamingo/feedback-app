@@ -373,6 +373,75 @@ export const upvoteSuggestion = async (suggestionId: number): Promise<void> => {
   }
 }
 
+
+
+export const createSuggestionV2 = async (formData: Record<string, any>): Promise<number> => {
+  console.log("using v2 api")
+  try {
+    formData.status = 'Suggestion'
+    formData.completed = false
+    const response = await apiClient.post('/v2/suggestions', formData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    if (response.status === 200 && response.data.id) {
+      return response.data.id
+    } else {
+      return NaN
+    }
+  } catch (error: any) {
+    handleErrors(error)
+    throw new Error('Failed to create suggestion')
+  }
+}
+
+export const updateSuggestionV2 = async (
+  suggestionId: number,
+  formData: Record<string, any>
+): Promise<number> => {
+  console.log("using v2 api")
+  try {
+    const response = await apiClient.put(
+      `/v2/suggestions?suggestion_id=${suggestionId}`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    if (response.status === 200 && response.data.id) {
+      return response.data.id
+    } else {
+      return NaN
+    }
+  } catch (error: any) {
+    handleErrors(error)
+    throw new Error('Failed to update suggestion')
+  }
+}
+
+export const readSuggestionsV2 = async (params?: Record<string, any>): Promise<any> => {
+  console.log("using v2 api")
+  console.log(params)
+  try {
+    const response = await apiClient.get('/v2/suggestions', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      params
+    })
+    if (params?.suggestion_id) {
+      return response.data.length ? response.data[0] : null;
+    }
+    return response.data
+  } catch (error: any) {
+    handleErrors(error)
+    throw new Error('Failed to read suggestions')
+  }
+}
+
 export default {
   setApiClient,
   enableBuildMode,
@@ -392,5 +461,8 @@ export default {
   readCommentsBySuggestion,
   upvoteSuggestion,
   TOKEN_COOKIE,
-  TOKEN_EXPIRATION_COOKIE
+  TOKEN_EXPIRATION_COOKIE,
+  createSuggestionV2,
+  updateSuggestionV2,
+  readSuggestionsV2
 }
