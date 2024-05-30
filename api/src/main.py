@@ -1,9 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Query, Request
 from sqlalchemy.orm import Session
 from typing import List, Optional
-import math
-
-
 from src import models, schemas, crud, database
 from src.database import engine, SessionLocal, seed_data
 from passlib.context import CryptContext
@@ -18,7 +15,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
-from typing import List, Dict, Any
+from typing import List
 
 
 load_dotenv()
@@ -31,7 +28,6 @@ DEFAULT_RESPONSE_LIMIT = int(
     else os.getenv("DEFAULT_RESPONSE_LIMIT")
 )
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")) or 30
-
 
 print("ENVIRONMENT VARIABLES")
 print("DEV MODE")
@@ -72,7 +68,6 @@ def get_db():
 
 
 if SEED_DATA == "True":
-    print("hello???")
     seed_data()
 
 
@@ -189,7 +184,6 @@ def toggle_upvote(
     return upvote
 
 
-# Updated routes in main.py
 @app.get("/suggestion-counts")
 def suggestion_counts(
     categories: List[str] = Query([]),
