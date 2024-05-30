@@ -1,10 +1,10 @@
 // src/types/enums.ts
 export enum Category {
-  FEATURE = 'Feature',
-  BUG = 'Bug',
-  ENHANCEMENT = 'Enhancement',
   UI = 'UI',
-  UX = 'UX'
+  UX = 'UX',
+  ENHANCEMENT = 'Enhancement',
+  BUG = 'Bug',
+  FEATURE = 'Feature',
 }
 
 export enum Status {

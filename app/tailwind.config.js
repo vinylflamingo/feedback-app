@@ -46,6 +46,9 @@ export default {
         DEFAULT: '#62BCFA',
       },
     },
+    screens: {
+      'xs': {'max': '360px'},
+    },
     fontFamily: {
       jost: ['Jost', 'sans-serif'],
     },

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="flex flex-col justify-center items-center">
       <div v-if="loading" class="h-screen w-screen flex items-center justify-center">
         <LoadingSvg />
       </div>

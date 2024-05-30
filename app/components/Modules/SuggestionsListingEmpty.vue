@@ -1,5 +1,5 @@
 <template>
-    <div class="w-[327px] h-[460px] bg-white rounded-xl m-6 flex flex-col items-center justify-center">
+    <div class="w-[327px] xs:w-full h-[460px] bg-white rounded-xl m-6 xs:mx-0 flex flex-col items-center justify-center">
         <svg width="102" height="108" viewBox="0 0 102 108" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g id="Group 17">
                 <g id="Group 16" opacity="0.5">
@@ -26,7 +26,7 @@
                 </g>
             </g>
         </svg>
-        <h1 class="text-darkerBlue text-[18px] font-bold mt-8">There is no feedback yet.</h1>
+        <h1 class="text-darkerBlue text-[18px] font-bold mt-8 text-center">There is no feedback yet.</h1>
         <p class="text-[13px] font-regular text-center text-greyBlue max-w-72 mt-2">Got a suggestion? Found a bug that needs to be squashed? We love hearing about new ideas to improve our app.</p>
         <Button to="/suggestion" :color="color" text="+ Add Feedback" :width="width" class="mt-6" />
     </div>

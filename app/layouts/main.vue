@@ -43,7 +43,7 @@
 .background-svg {
   position: absolute;
   transform: translateX(-50%);
-  opacity: 5%;
+  opacity: 8%;
   filter: blur(200px);
   z-index: -5; /* Ensure it's behind other content */
 }

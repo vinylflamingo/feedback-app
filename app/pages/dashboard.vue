@@ -1,5 +1,6 @@
 <template>
     <div class="">
+      <DashboardMenu />
       <SuggestionListing v-if="suggestions.length" :suggestions="suggestions" />
       <div v-else class="flex items-center justify-center">
         <SuggestionsListingEmpty />
