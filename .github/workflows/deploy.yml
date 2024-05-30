@@ -75,7 +75,7 @@ jobs:
       - name: Build and push Docker image
         if: steps.check_changes.outputs.changes == 'true'
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/vinylflamingo-feeback-api:latest ./api
+          docker build --target production -t ${{ secrets.DOCKER_USERNAME }}/vinylflamingo-feeback-api:latest ./api
           docker push ${{ secrets.DOCKER_USERNAME }}/vinylflamingo-feeback-api:latest
 
       - name: Setup SSH key

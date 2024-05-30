@@ -1,5 +1,5 @@
+# Base stage
 FROM python:3.12.3-slim
-
 
 WORKDIR /app
 
@@ -30,5 +30,15 @@ COPY . .
 # Set the working directory to /app/src
 WORKDIR /app
 
-# Command to run the application
+
+# Development stage (default)
+FROM base AS development
+CMD ["poetry", "run", "fastapi", "dev", "src/main.py"]
+
+# Production stage
+FROM base AS production
 CMD ["poetry", "run", "fastapi", "run", "src/main.py"]
+
+# Default stage to be built if no target is specified
+FROM development AS default
+
