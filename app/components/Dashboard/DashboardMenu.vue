@@ -50,7 +50,7 @@ const menuState = () => {
 
 <style scoped>
 .gradient-bg {
-    background-image: url('data:image/svg+xml,<svg width="100%" height="100%" viewBox="0 0 375 72" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="375" height="72" fill="url(%23paint0_radial_0_327)"/><defs><radialGradient id="paint0_radial_0_327" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(389.625 -7.47832) rotate(166.849) scale(407.855 184.218)"><stop stop-color="%23E84D70"/><stop offset="0.530886" stop-color="%23A337F6"/><stop offset="1" stop-color="%2328A7ED"/></radialGradient></defs></svg>');
+    background-image: url('data:image/svg+xml,%3Csvg width="100%" height="100%" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="375" height="72" fill="url(%23paint0_radial_0_327)"/%3E%3Cdefs%3E%3CradialGradient id="paint0_radial_0_327" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(389.625 -7.47832) rotate(166.849) scale(407.855 184.218)"%3E%3Cstop stop-color="%23E84D70"/%3E%3Cstop offset="0.530886" stop-color="%23A337F6"/%3E%3Cstop offset="1" stop-color="%2328A7ED"/%3E%3C/radialGradient%3E%3C/defs%3E%3C/svg%3E%0A');
     background-repeat: no-repeat;
     background-size: cover;
 }

@@ -18,7 +18,4 @@ const loading = ref(true);
 onMounted(() => {
   loading.value = false;
 });
-
-
-
 </script>
