@@ -34,7 +34,6 @@
     styling.value = `${baseClass} ${initialColorClass}`;
   };
   
-  console.log("buttons props:", props);
   </script>
 
 /* Including dynamic classes for Tailwind JIT */

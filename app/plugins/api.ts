@@ -12,8 +12,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const authStore = useAuthStore()
 
   const baseUrl: string = config.public.BASE_URL || "https://localhost:8000"
-  console.log('Initializing API client with baseURL:', baseUrl)
-
   const apiClient = axios.create({
     baseURL: baseUrl,
     headers: {
@@ -38,7 +36,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         authStore.setTokenExpiration(expirationDate)
         
         if (new Date(expirationDate) <= new Date()) {
-          console.log('Token expired. Clearing token.')
           authStore.clearToken()
         } else {
           apiClient.defaults.headers.common['Authorization'] = `Bearer ${existingToken}`
@@ -62,7 +59,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   api.setApiClient(apiClient)
   
   const isBuildTime = process.env.BUILD_TIME === 'true'
-  console.log("is build time?", isBuildTime)
   if (isBuildTime) {
     api.enableBuildMode()
     
@@ -94,7 +90,6 @@ async function checkTokenExpiration(apiClient: any) {
 }
 
 export const refreshAuthToken = async (apiClient: any): Promise<string | null> => {
-  console.log("token refresh triggered")
   const authStore = useAuthStore()
   const tokenCookie = useCookie(api.TOKEN_COOKIE)
   const tokenExpirationCookie = useCookie(api.TOKEN_EXPIRATION_COOKIE)

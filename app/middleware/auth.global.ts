@@ -5,7 +5,6 @@ import { useAuthStore } from '~/stores/useAuthStore'
 import { useRuntimeConfig } from '#imports'
 
 export default defineNuxtRouteMiddleware((to, from) => {
-  console.log("auth middleware activated")
 
   if (to.path === '/login') {
     return
@@ -19,7 +18,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
   const tokenRefreshMargin = parseInt(config.public.TOKEN_REFRESH_MARGIN)
 
   if (!token) {
-    console.log('No token found. Redirecting to login.')
     return navigateTo('/login')
   }
 
@@ -30,28 +28,21 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
     const minutesUntilExpiration = timeDifference / 60 // Convert to minutes
     const minutesUntilRefresh = minutesUntilExpiration - tokenRefreshMargin;
-
-    console.log("minutes until expiration: ", minutesUntilExpiration)
     console.log(`Token will refresh in ${minutesUntilRefresh} minutes`)
 
     if (timeDifference <= 0) {
-      console.log('Token expired. Clearing token and redirecting to login.');
       authStore.clearToken();
       return navigateTo('/login');
     }
     
     if (minutesUntilExpiration <= 0) {
-      console.log('Token close to expiration. Redirecting to login.');
       return navigateTo('/login');
     }
     
     if (minutesUntilRefresh <= 0) {
-      console.log('Token needs refresh. Redirecting to login.');
       return navigateTo('/login');
     }
     
-    console.log('Token is valid. Proceeding to route.')
-
     if (to.path === '/'){
       return navigateTo('dashboard')
     }

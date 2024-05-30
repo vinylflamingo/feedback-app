@@ -42,7 +42,6 @@ if (error.value) {
 
 onMounted(() => {
   const suggestionId = Number(route.params.id);
-  console.log("Mounted with ID:", suggestionId);
   if (suggestionId) {
     id.value = suggestionId;
   } else {

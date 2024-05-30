@@ -36,7 +36,6 @@ import type { Suggestion } from '~/types';
 import CategoryBubble from '../Elements/CategoryBubble.vue';
 
 const props = defineProps<{ suggestion: Suggestion }>();
-console.log(props)
 
 const goToDetailPage = () => {
     navigateTo(`/suggestion/${props.suggestion.id}`);

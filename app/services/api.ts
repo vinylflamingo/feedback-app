@@ -51,16 +51,12 @@ export const login = async (formData: Record<string, any>): Promise<void> => {
   const config = useRuntimeConfig()
   const tokenLifetime = parseInt(config.public.TOKEN_LIFETIME || '60')
 
-  // console.log('Starting login process')
-  // console.log('Received form data:', formData)
-
   try {
     const data = prepareData(
       { username: formData.username, password: formData.password },
       'application/x-www-form-urlencoded'
     )
-    // console.log('Prepared data for API request:', data)
-
+    
     const response = await apiClient.post('/token', data, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'

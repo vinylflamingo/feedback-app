@@ -7,7 +7,6 @@
 
 
 <script setup lang="ts">
-console.log("new suggestion route called.")
 import Base from '~/components/Form/Base.vue';
 import { SUGGESTION_API_CALLS } from '~/constants/api-calls';
 import { SuggestionApi } from '@/constants/enums';

@@ -27,7 +27,6 @@ function stringIsNullOrEmpty(str: string | undefined): boolean {
 }
 
 const handleSubmit = async (props: FormComponentProps) => {
-  console.log("Form Submitted with props:", props);
   const formData: Record<string, any> = {};
 
   const formElements = (document.querySelector(`#${props.formId}`) as HTMLFormElement).elements;
@@ -38,8 +37,6 @@ const handleSubmit = async (props: FormComponentProps) => {
       formData[inputElement.name] = inputElement.value;
     }
   }
-
-  console.log("Collected Form Data before API call:", formData);
 
   try {
     let response;
@@ -55,13 +52,11 @@ const handleSubmit = async (props: FormComponentProps) => {
       await navigateTo(path)
     }
 
-    console.log("API call successful with data:", formData);
   } catch (error) {
     console.error('API call failed with error:', error);
   }
 
   if (!stringIsNullOrEmpty(props.returnUrl)) {
-    console.log("Return URL prop passed. Now redirecting... ", props.returnUrl);
     window.location.href = props.returnUrl!;  // This will force a full page reload. 
   }
 };
