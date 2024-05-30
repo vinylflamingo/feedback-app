@@ -60,16 +60,16 @@ jobs:
         run: |
           echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> ./api/.env
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> ./api/.env
-          echo "ALGORITHM=HS256" >> ./api/.env
-          echo "ACCESS_TOKEN_EXPIRE_MINUTES=60" >> ./api/.env
-          echo "POSTGRES_HOST=db" >> ./api/.env
+          echo "ALGORITHM=${{ vars.ALGORITHM}}" >> ./api/.env
+          echo "ACCESS_TOKEN_EXPIRE_MINUTES=${{ vars.ACCESS_TOKEN_EXPIRE_MINUTES}}" >> ./api/.env
+          echo "POSTGRES_HOST=${{secrets.POSTGRES_HOST}}" >> ./api/.env
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> ./api/.env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> ./api/.env
           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> ./api/.env
           echo "POSTGRES_PORT=5432" >> ./api/.env
-          echo "DEV_MODE=False" >> ./api/.env
-          echo "SEED_DATA=True" >> ./api/.env
-          echo "DEFAULT_RESPONSE_LIMIT=20" >> ./api/.env
+          echo "DEV_MODE=${{vars.DEV_MODE}}" >> ./api/.env
+          echo "SEED_DATA=${{vars.SEED_DATA}}" >> ./api/.env
+          echo "DEFAULT_RESPONSE_LIMIT=10" >> ./api/.env
           echo "PYTHONUNBUFFERED=1" >> ./api/.env
 
       - name: Build and push Docker image
