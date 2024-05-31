@@ -6,7 +6,7 @@
                     Frontend Mentor
                 </h1>
                 <h2 class="font-medium opacity-75 text-[13px]">
-                    Feedback Board
+                    <NuxtLink to="https://github.com/vinylflamingo">@vinylflamingo</NuxtLink>
                 </h2>
             </div>
             <MobileMenuButton @update-open-state="menuState" :openState="isOpenMobileMenu"  />

@@ -1,5 +1,6 @@
 import type { AxiosInstance } from 'axios';
 import type { Suggestion, Comment } from '../types';
+import { type CookieRef } from '#app';
 
 export interface Api {
   apiClient: AxiosInstance;
@@ -18,6 +19,7 @@ export interface Api {
   getRoadmapCounts(): Promise<Record<string, number>>;
   TOKEN_COOKIE: string;
   TOKEN_EXPIRATION_COOKIE: string;
+  updateCookiesAndStore(): void;
 }
 
 export interface SortOption {
@@ -40,5 +42,29 @@ export interface SuggestionCount {
   type: string;
   data: Record<string, number>;
 }
+
+export interface AuthenticationResponse {
+  access_token: string;
+  token_type: string;
+  user_id: number;
+  username: string
+}
+
+export interface AuthCookies {
+  tokenCookie: CookieRef<string | null | undefined>;
+  expirationCookie: CookieRef<string | null | undefined>;
+  userCookie: CookieRef<string | null | undefined>;
+}
+
+export interface EncryptedCookie {
+  encryptedCookie: CookieRef<string | null | undefined>
+}
+
+export interface TokenData {
+  token: string;
+  userId: number;
+  expiration: string;
+}
+
 
 

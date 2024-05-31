@@ -1,7 +1,7 @@
 // store/auth.ts
 import { defineStore } from 'pinia'
 
-interface AuthState {
+export interface AuthState {
   token: string | null;
   tokenExpiration: Date | string | null;
   currentUserId: number | null;
