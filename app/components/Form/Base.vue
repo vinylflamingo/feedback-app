@@ -57,7 +57,7 @@ const handleSubmit = async (props: FormComponentProps) => {
   }
 
   if (!stringIsNullOrEmpty(props.returnUrl)) {
-    window.location.href = props.returnUrl!;  // This will force a full page reload. 
+    navigateTo(props.returnUrl); 
   }
 };
 </script>

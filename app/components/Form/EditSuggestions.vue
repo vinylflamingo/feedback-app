@@ -34,13 +34,13 @@
 </template>
 
 <script setup lang="ts">
-import LoadingSvg from '../Elements/LoadingSvg.vue';
+import LoadingSvg from '../Elements/Utility/LoadingSvg.vue';
 import { ref, reactive, onMounted } from 'vue';
 import { FormTextTypes, Category, Status } from '@/constants/enums';
-import SingleLineTextField from '@/components/Elements/SingleLineTextField.vue';
-import DropdownField from '@/components/Elements/DropdownField.vue';  
+import SingleLineTextField from '~/components/Elements/Form/SingleLineTextField.vue';
+import DropdownField from '~/components/Elements/Form/DropdownField.vue';  
 import type { Suggestion } from '~/types';
-import MultiLineTextField from '../Elements/MultiLineTextField.vue';
+import MultiLineTextField from '../Elements/Form/MultiLineTextField.vue';
 
 interface EditSuggestionFormProps {
   suggestion: Suggestion;

@@ -6,6 +6,7 @@ import { useAuthStore } from '~/stores/useAuthStore'
 import { useCookie } from '#app'
 
 let isRefreshing = false
+let needsRefresh = false
 
 export default defineNuxtPlugin(async (nuxtApp) => {
   const config = useRuntimeConfig()
@@ -25,7 +26,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   if (existingToken) {
     authStore.setToken(existingToken)
-
     const expirationCookie = useCookie(api.TOKEN_EXPIRATION_COOKIE)
     const expirationValue = expirationCookie.value
 
@@ -39,6 +39,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
           authStore.clearToken()
         } else {
           apiClient.defaults.headers.common['Authorization'] = `Bearer ${existingToken}`
+          needsRefresh = true;
         }
       }
     }
@@ -57,7 +58,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   )
 
   api.setApiClient(apiClient)
-  
+
   const isBuildTime = process.env.BUILD_TIME === 'true'
   if (isBuildTime) {
     api.enableBuildMode()
@@ -121,3 +122,9 @@ export const refreshAuthToken = async (apiClient: any): Promise<string | null> =
     isRefreshing = false
   }
 }
+
+if (needsRefresh) {
+  console.log("refresh auth token triggered by startup plugin")
+  await refreshAuthToken(api)
+}
+

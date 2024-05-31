@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
+    'vue3-perfect-scrollbar/nuxt'
   ],
   plugins: ['~/plugins/api.ts'],
   devtools: { enabled: true },

@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import Button from '../Elements/Button.vue';
+import Button from '../Elements/Interactive/Button.vue';
 import { ButtonColor, ButtonWidth } from '~/constants/enums';
 
 const color = ButtonColor.PURPLE;

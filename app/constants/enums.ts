@@ -24,6 +24,7 @@ export enum SuggestionApi {
   CREATE_SUGGESTION = 'CREATE_SUGGESTION',
   UPDATE_SUGGESTION = 'UPDATE_SUGGESTION',
   READ_SUGGESTIONS = 'READ_SUGGESTIONS',
+  GET_ROADMAP_COUNTS = 'GET_ROADMAP_COUNTS'
 }
 
 
@@ -72,4 +73,11 @@ export enum ButtonWidth {
   FULL = "w-full",
   SMALL = 'w-[134px]',
   LARGE = 'w-[279px]'
+}
+
+export enum SortOptions {
+  NEWEST = "newest|Newest",
+  MOST_POPULAR = "top|Most Popular",
+  MOST_COMMENTS = "comments|Most Comments",
+  OLDEST = "oldest|Oldest",
 }

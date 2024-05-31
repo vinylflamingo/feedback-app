@@ -1,24 +1,32 @@
 <template>
-    <nav role="navigation">
-      <div id="menuToggle">
-        <input type="checkbox" v-model="checked" />
-        <span></span>
-        <span></span>
-        <span></span>
-        <ul id="menu"></ul>
-      </div>
-    </nav>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        checked: false,
-      };
-    },
-  };
-  </script>
+  <nav role="navigation">
+    <div id="menuToggle">
+      <input type="checkbox" v-model="localOpenState" @change="updateOpenState" />
+      <span></span>
+      <span></span>
+      <span></span>
+      <ul id="menu"></ul>
+    </div>
+  </nav>
+</template>
+
+<script setup lang="ts">
+interface MobileMenuButtonProps {
+  openState: boolean;
+}
+
+const props = defineProps<MobileMenuButtonProps>();
+const emit = defineEmits(['update-open-state']);
+const localOpenState = ref(props.openState);
+
+watch(() => props.openState, (newVal) => {
+  localOpenState.value = newVal;
+});
+
+const updateOpenState = () => {
+  emit('update-open-state', localOpenState.value);
+};
+</script>
   
   <style scoped>
   #menuToggle {

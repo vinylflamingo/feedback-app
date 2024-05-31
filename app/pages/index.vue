@@ -5,5 +5,5 @@
 </template>
  
 <script setup lang="ts">
-import LoadingSvg from '~/components/Elements/LoadingSvg.vue';
+import LoadingSvg from '~/components/Elements/Utility/LoadingSvg.vue';
 </script>

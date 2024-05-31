@@ -22,9 +22,9 @@
   
   <script setup lang="ts">
   import { FormTextTypes, Category } from '@/constants/enums'
-  import SingleLineTextField from '@/components/Elements/SingleLineTextField.vue'
-  import DropdownField from '@/components/Elements/DropdownField.vue';  
-  import MultiLineTextField from '../Elements/MultiLineTextField.vue';
+  import SingleLineTextField from '~/components/Elements/Form/SingleLineTextField.vue'
+  import DropdownField from '~/components/Elements/Form/DropdownField.vue';  
+  import MultiLineTextField from '../Elements/Form/MultiLineTextField.vue';
   const titleType = FormTextTypes.TEXT;
   const categoryOptions = Object.values(Category) as string[];
   </script>

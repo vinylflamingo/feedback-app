@@ -19,7 +19,7 @@
   
   const props = defineProps<ButtonProps>();
   
-  const baseClass = `cursor-pointer h-10 px-2 text-[#F2F4FE] text-[13px] flex items-center justify-center rounded-xl m-2 font-semibold ${props.width}`;
+  const baseClass = `cursor-pointer h-10 px-2 text-[#F2F4FE] text-[13px] flex items-center justify-center rounded-xl font-semibold ${props.width}`;
   const initialColorClass = props.color;
   const hoverColorClass = `${props.color}-light`; // Adjust this to your actual hover color class
   

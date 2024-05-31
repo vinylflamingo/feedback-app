@@ -15,13 +15,13 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import LoadingSvg from '~/components/Elements/LoadingSvg.vue';
+import LoadingSvg from '~/components/Elements/Utility/LoadingSvg.vue';
 import Base from '~/components/Form/Base.vue';
 import { SUGGESTION_API_CALLS } from '~/constants/api-calls';
 import { SuggestionApi } from '@/constants/enums';
 import EditSuggestions from '~/components/Form/EditSuggestions.vue';
 import type { Suggestion } from '~/types';
-import Homelink from '~/components/Elements/Homelink.vue';
+import Homelink from '~/components/Elements/Interactive/Homelink.vue';
 
 const route = useRoute();
 const router = useRouter();

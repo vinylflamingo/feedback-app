@@ -190,7 +190,7 @@ def toggle_upvote(
     return upvote
 
 
-@app.get("/suggestion-counts")
+@app.get("/suggestion-counts", dependencies=[Depends(oauth2_scheme)])
 def suggestion_counts(
     categories: List[str] = Query([]),
     statuses: List[str] = Query([]),

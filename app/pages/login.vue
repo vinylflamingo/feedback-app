@@ -14,5 +14,5 @@ import { AuthApi } from '@/constants/enums';
 const formType = AUTH_API_CALLS[AuthApi.LOGIN];
 const route = useRoute()
 const router = useRouter()
-const returnUrl: string = route.query.returnUrl as string || '/';
+const returnUrl: string = route.query.returnUrl as string || '/dashboard';
 </script>

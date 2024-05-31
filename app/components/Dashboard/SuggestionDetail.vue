@@ -2,6 +2,7 @@
   <div>
    <LoadingSvg v-if="loading" />
     <div v-else>
+      <Backlink />
       <NuxtLink :to="editLink">EDIT</NuxtLink>
       <h1>{{ props.suggestion.title }}</h1>
       <p>category: {{ props.suggestion.category }}</p>
@@ -21,8 +22,8 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
 import type { Suggestion } from '~/types';
-import LoadingSvg from '../Elements/LoadingSvg.vue';
-import Backlink from '../Elements/Backlink.vue';
+import LoadingSvg from '../Elements/Utility/LoadingSvg.vue';
+import Backlink from '../Elements/Interactive/Backlink.vue';
 import { useRoute } from 'vue-router';
 
 

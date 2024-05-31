@@ -3,6 +3,7 @@
 import { defineNuxtRouteMiddleware, navigateTo } from '#imports'
 import { useAuthStore } from '~/stores/useAuthStore'
 import { useRuntimeConfig } from '#imports'
+import api from '~/services/api'
 
 export default defineNuxtRouteMiddleware((to, from) => {
 
@@ -40,7 +41,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     }
     
     if (minutesUntilRefresh <= 0) {
-      return navigateTo('/login');
+      api.refreshAuthToken();
     }
     
     if (to.path === '/'){

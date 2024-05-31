@@ -4,8 +4,9 @@ import type { AxiosInstance } from 'axios'
 import { useAuthStore } from '../stores/useAuthStore'
 import { useCookie } from '#app'
 import qs from 'qs'
-import type { Api, Suggestion } from '~/types'
+import type { Api, Suggestion, RoadmapCounts, SuggestionCount  } from '~/types'
 import { useRuntimeConfig } from '#app'
+import { Status } from '~/constants/enums'
 
 let apiClient: AxiosInstance
 
@@ -56,12 +57,15 @@ export const login = async (formData: Record<string, any>): Promise<void> => {
       { username: formData.username, password: formData.password },
       'application/x-www-form-urlencoded'
     )
+    console.log("LOGIN")
     
     const response = await apiClient.post('/token', data, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
+
+    console.log(response)
     
     const token = response.data.access_token
     const expiresIn = tokenLifetime * 60 // Convert minutes to seconds
@@ -137,7 +141,6 @@ export const clearAuthToken = (): void => {
   delete apiClient.defaults.headers.common['Authorization']
 }
 
-// API Calls
 export const createUser = async (formData: Record<string, any>): Promise<void> => {
   try {
     await apiClient.post('/users', formData, {
@@ -150,7 +153,6 @@ export const createUser = async (formData: Record<string, any>): Promise<void> =
     throw new Error('Failed to create user')
   }
 }
-
 
 export const addComment = async (
   suggestionId: number,
@@ -262,6 +264,40 @@ export const readSuggestions = async (params?: Record<string, any>): Promise<any
   }
 }
 
+export const getRoadmapCounts = async (): Promise<Record<string, number>> => {
+  try {
+      const response = await apiClient.get<SuggestionCount[]>('/suggestion-counts', {
+          params: {
+              statuses: ['Planned', 'In Progress', 'Live'],
+          },
+          paramsSerializer: (params) => {
+              return Object.keys(params)
+                  .map(key => {
+                      return params[key].map((value: string) => `${key}=${encodeURIComponent(value)}`).join('&');
+                  })
+                  .join('&');
+          }
+      });
+
+      // Process the response to get the desired format
+      const roadmapCounts: Record<string, number> = {};
+
+      response.data.forEach((countObj) => {
+          if (countObj.type === 'status') {
+              Object.entries(countObj.data).forEach(([key, value]) => {
+                  roadmapCounts[key] = value;
+              });
+          }
+      });
+
+      return roadmapCounts;
+  } catch (error) {
+      console.error('Error fetching roadmap counts:', error);
+      throw error;
+  }
+};
+
+
 export default {
   setApiClient,
   enableBuildMode,
@@ -276,5 +312,6 @@ export default {
   TOKEN_EXPIRATION_COOKIE,
   createSuggestion,
   updateSuggestion,
-  readSuggestions
+  readSuggestions,
+  getRoadmapCounts
 }

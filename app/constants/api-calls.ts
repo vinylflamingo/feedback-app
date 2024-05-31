@@ -16,6 +16,7 @@ export const SUGGESTION_API_CALLS: Record<SuggestionApi, ApiFunction> = {
   [SuggestionApi.CREATE_SUGGESTION]: api.createSuggestion,
   [SuggestionApi.UPDATE_SUGGESTION]: api.updateSuggestion,
   [SuggestionApi.READ_SUGGESTIONS]: api.readSuggestions,
+  [SuggestionApi.GET_ROADMAP_COUNTS]: api.getRoadmapCounts,
 };
 
 export const COMMENT_API_CALLS: Record<CommentApi, ApiFunction> = {

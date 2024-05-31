@@ -17,9 +17,9 @@ import { SUGGESTION_API_CALLS } from '~/constants/api-calls';
 import { SuggestionApi } from '@/constants/enums';
 import type { Suggestion } from '~/types';
 import SuggestionDetail from '~/components/Dashboard/SuggestionDetail.vue';
-import LoadingSvg from '~/components/Elements/LoadingSvg.vue';
-import Backlink from '~/components/Elements/Backlink.vue';
-import Homelink from '~/components/Elements/Homelink.vue';
+import LoadingSvg from '~/components/Elements/Utility/LoadingSvg.vue';
+import Backlink from '~/components/Elements/Interactive/Backlink.vue';
+import Homelink from '~/components/Elements/Interactive/Homelink.vue';
 
 const route = useRoute();
 const router = useRouter();

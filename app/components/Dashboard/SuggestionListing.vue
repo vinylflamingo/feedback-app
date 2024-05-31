@@ -3,7 +3,9 @@
       <div v-if="loading" class="h-screen w-screen flex items-center justify-center">
         <LoadingSvg />
       </div>
-        <SuggestionCard v-else v-for="suggestion in props.suggestions" :suggestion="suggestion" />
+      <div v-else="loading" class="flex flex-col items-center justify-center h-full w-full">
+        <SuggestionCard v-for="suggestion in props.suggestions" :suggestion="suggestion" />
+      </div>
     </div>
 
 </template>
@@ -11,7 +13,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import type { Suggestion } from '~/types';
 import SuggestionCard from '../Modules/SuggestionCard.vue';
-import LoadingSvg from '../Elements/LoadingSvg.vue';
+import LoadingSvg from '../Elements/Utility/LoadingSvg.vue';
 const props = defineProps<{ suggestions: Suggestion[] }>();
 const loading = ref(true);
 

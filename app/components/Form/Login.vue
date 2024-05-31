@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { FormTextTypes } from '@/constants/enums'
-import SingleLineTextField from '@/components/Elements/SingleLineTextField.vue'
+import SingleLineTextField from '~/components/Elements/Form/SingleLineTextField.vue'
 
 const usernameType = FormTextTypes.TEXT;
 const passwordType = FormTextTypes.PASSWORD;
