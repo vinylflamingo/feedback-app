@@ -30,6 +30,7 @@ export enum SuggestionApi {
 
 export enum UserApi {
   CREATE_USER = 'CREATE_USER',
+  USER_INFO = 'USER_INFO'
 }
 
 export enum UpvoteApi {
@@ -80,4 +81,11 @@ export enum SortOptions {
   MOST_POPULAR = "top|Most Popular",
   MOST_COMMENTS = "comments|Most Comments",
   OLDEST = "oldest|Oldest",
+}
+
+
+export enum AppCookies {
+  TOKEN_COOKIE = 'auth_token',
+  TOKEN_EXPIRATION_COOKIE = 'auth_token_expiration',
+  TOKEN_USER_ID = "current_user_id"
 }

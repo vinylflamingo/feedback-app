@@ -17,8 +17,6 @@ export interface Api {
   updateSuggestion(suggestionId: number, formData: Record<string, any>): Promise<number>;
   readSuggestions(params?: Record<string, any>): Promise<any>;
   getRoadmapCounts(): Promise<Record<string, number>>;
-  TOKEN_COOKIE: string;
-  TOKEN_EXPIRATION_COOKIE: string;
   updateCookiesAndStore(): void;
 }
 
@@ -65,6 +63,5 @@ export interface TokenData {
   userId: number;
   expiration: string;
 }
-
 
 

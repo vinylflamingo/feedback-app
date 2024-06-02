@@ -9,13 +9,13 @@
                 </p>
                 <CategoryBubble class="mt-auto" :category="props.suggestion.category"></CategoryBubble>
             </div>
-            <div class="order-2 row-span-2 col-span-1 p-4 bg-lightBlue rounded-[10px] mt-2
-                        w-16 h-8 flex justify-start-center items-center flex-row cursor-pointer"
-                 @click.stop="toggleUpvote">
+            <div 
+                :class="upvoteButtonClass" 
+                @click.stop="toggleUpvote">
                 <svg width="9" height="7" viewBox="0 0 9 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 6L4 2L8 6" stroke="#4661E6" stroke-width="2"/>
+                    <path d="M0 6L4 2L8 6" :stroke="arrowColor" stroke-width="2"/>
                 </svg>
-                <span class="text-[13px] font-bold text-darkerBlue ml-[10px]">{{ suggestion.upvote_count }}</span>
+                <span class="text-[13px] font-bold ml-[10px]">{{ props.suggestion.upvote_count }}</span>
             </div>
             <div class="order-3 row-span-2 col-span-1 w-full height-full flex justify-end flex-row items-end mb-2">
                 <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -23,25 +23,48 @@
                 </svg>
                 <div class="text-darkBlue font-bold text-[13px] pl-2 items-end flex flex-col leading-none">
                     {{ props.suggestion.comments.length }}
-
                 </div>
-
             </div>
         </div>
     </div> 
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue';
 import type { Suggestion } from '~/types';
 import CategoryBubble from '../Elements/Interactive/CategoryBubble.vue';
+import { UpvoteApi } from '~/constants/enums';
+import { UPVOTE_API_CALLS } from '~/constants/api-calls';
+import { useUserStore } from '~/stores/useUserStore';
+import type { Axios, AxiosResponse } from 'axios';
 
 const props = defineProps<{ suggestion: Suggestion }>();
+const key = "card-" + props.suggestion.id;
+const upvoteData = ref({ active: false });
+const arrowColor = ref('#4661E6');
+const userStore = useUserStore();
 
-const goToDetailPage = () => {
-    navigateTo(`/suggestion/${props.suggestion.id}`);
-};
+if(userStore.getUpvotes.indexOf(props.suggestion.id) != -1) {
+    upvoteData.value.active = true;
+    arrowColor.value = "#fff";
+}
+
+const upvoteButtonClass = computed(() => [
+  'order-2 row-span-2 col-span-1 p-4 rounded-[10px] mt-2 w-16 h-8 flex justify-start-center items-center flex-row cursor-pointer',
+  upvoteData.value.active ? 'bg-blue text-white' : 'bg-lightBlue text-blue'
+]);
 
 const toggleUpvote = async () => {
-    console.log("updoot toggled")
+  UPVOTE_API_CALLS[UpvoteApi.UPVOTE_TOGGLE](props.suggestion.id)
+  upvoteData.value.active = !upvoteData.value.active;
+  console.log("upvote: ", props.suggestion.id, upvoteData.value.active);
+  userStore.updateStore(props.suggestion.id, userStore.user.upvotes);
+  if (upvoteData.value.active === true) arrowColor.value = "#fff"; else arrowColor.value = "#4661E6"
+  if (upvoteData.value.active === true) props.suggestion.upvote_count ++;
+  else props.suggestion.upvote_count --;
+};
+
+const goToDetailPage = () => {
+  navigateTo(`/suggestion/${props.suggestion.id}`);
 };
 </script>

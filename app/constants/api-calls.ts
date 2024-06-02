@@ -10,6 +10,7 @@ export const AUTH_API_CALLS: Record<AuthApi, ApiFunction> = {
 
 export const USER_API_CALLS: Record<UserApi, ApiFunction> = {
   [UserApi.CREATE_USER]: api.createUser,
+  [UserApi.USER_INFO]: api.currentUser,
 };
 
 export const SUGGESTION_API_CALLS: Record<SuggestionApi, ApiFunction> = {

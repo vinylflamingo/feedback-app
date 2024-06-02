@@ -1,5 +1,4 @@
-import os
-import json
+import os, sys, json, time
 from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -33,6 +32,26 @@ engine = create_engine(db_url)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+# Database check function
+def check_db_connection():
+    retries = 3
+    for i in range(retries):
+        try:
+            db = SessionLocal()
+            db.execute(text("SELECT 1"))
+            db.close()
+            print("Database connection successful")
+            return True
+        except Exception as e:
+            print(f"Database connection failed: {e}")
+            if i < retries - 1:
+                print(f"Retrying... ({i + 1}/{retries})")
+                time.sleep(15)
+            else:
+                print("Database connection failed after retries")
+                quit()
 
 
 def get_db():

@@ -68,6 +68,8 @@ export const updateCookiesAndStore = (response: AxiosResponse) => {
     cookies.expirationCookie.value = expirationDate.toISOString();
 
     apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+    stores.userStore.refreshStore();
     
     console.log("Successfully updated cookies and store.");
   } catch (error: any) {

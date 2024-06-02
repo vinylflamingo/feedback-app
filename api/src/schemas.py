@@ -100,10 +100,10 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
-    profile_picture: Optional[bytes] = None
+    profile_picture: Optional[str]
     suggestions: list[Suggestion] = []
     comments: list[Comment] = []
-    upvotes: list[int] = []
+    upvotes: list[Upvote] = []
 
     class Config:
         from_attributes = True

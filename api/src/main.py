@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, status, Query, Request
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from src import models, schemas, crud, database
-from src.database import engine, SessionLocal, seed_data
+from src.database import engine, SessionLocal, seed_data, check_db_connection
 from passlib.context import CryptContext
 from src.auth import (
     authenticate_user,
@@ -35,10 +35,14 @@ print(DEV_MODE)
 print("SEED DATABASE")
 print(SEED_DATA)
 
+check_db_connection()
+
 models.Base.metadata.create_all(bind=engine)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+if SEED_DATA == "True":
+    seed_data()
 
 app = FastAPI()
 origins = [
@@ -66,10 +70,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-
-if SEED_DATA == "True":
-    seed_data()
 
 
 @app.get("/health")
@@ -133,6 +133,7 @@ async def refresh_token(
 
 @app.get("/users/me", response_model=schemas.User)
 async def read_users_me(current_user: models.User = Depends(get_current_user)):
+    print(current_user.first_name)
     return current_user
 
 
