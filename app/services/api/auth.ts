@@ -20,7 +20,7 @@ export const login = async (formData: Record<string, any>): Promise<void> => {
   }
 };
 
-export const refreshAuthToken = async (): Promise<void> => {
+export const refreshAuthToken = async (): Promise<boolean> => {
   try {
     const response = await apiClient.post(
       '/refresh_token',
@@ -33,11 +33,13 @@ export const refreshAuthToken = async (): Promise<void> => {
     );
     if (response.status === 200) {
       updateCookiesAndStore(response);
+      return true
     } else {
       throw new Error(response.statusText);
     }
   } catch (error: any) {
     handleErrors(error);
+    return false
   }
 };
 

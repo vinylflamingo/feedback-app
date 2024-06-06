@@ -1,10 +1,8 @@
 <template>
-  <div>
-    <div class="flex flex-row justify-between">
-      <Backlink /><Homelink />
+  <div class="flex flex-col justify-center items-center mt-6 max-w-[327px]">
+    <div class="flex flex-row justify-between items-center w-full mb-3">
+      <Backlink custom-path="/dashboard" /><Button :width="buttonWidth" :color="buttonColor" text="Edit Feedback" :to="buttonLink" />
     </div>
-    
-    <h1>Suggestion Detail</h1>
     <SuggestionDetail v-if="suggestion" :suggestion="suggestion"/>
     <LoadingSvg v-else/>
   </div>
@@ -14,16 +12,21 @@
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { SUGGESTION_API_CALLS } from '~/constants/api-calls';
-import { SuggestionApi } from '@/constants/enums';
+import { ButtonWidth, ButtonColor, SuggestionApi } from '@/constants/enums';
 import type { Suggestion } from '~/types';
 import SuggestionDetail from '~/components/Dashboard/SuggestionDetail.vue';
 import LoadingSvg from '~/components/Elements/Utility/LoadingSvg.vue';
 import Backlink from '~/components/Elements/Interactive/Backlink.vue';
-import Homelink from '~/components/Elements/Interactive/Homelink.vue';
+import Button from '~/components/Elements/Interactive/Button.vue';
+
 
 const route = useRoute();
 const router = useRouter();
 const id = ref<number | null>(null);
+
+const buttonWidth = ButtonWidth.SMALL;
+const buttonColor = ButtonColor.BLUE
+const buttonLink = computed(() => `/suggestion/${id.value}/edit`);
 
 const { data: suggestion, error } = await useAsyncData<Suggestion>('suggestion', async () => {
   const newId = Number(route.params.id);

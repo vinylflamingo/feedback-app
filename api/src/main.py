@@ -220,7 +220,7 @@ def read_suggestions(
     db: Session = Depends(get_db),
     token: str = Depends(oauth2_scheme),
     user: bool = False,
-    sort: str = "latest",
+    sort: str = "newest",
 ):
     if user == True:
         current_user = get_current_user(db=db, token=token)
@@ -240,7 +240,18 @@ def read_suggestions(
         user=current_user,
         sort=sort,
     )
+
+    for suggestion in suggestions:
+        suggestion.comments = structure_comments(suggestion.comments)
+
     return suggestions
+
+
+def structure_comments(comments):
+    top_level_comments = [
+        comment for comment in comments if not comment.parent_comment_id
+    ]
+    return top_level_comments
 
 
 # Post new suggestions

@@ -185,7 +185,7 @@ def get_suggestions(
             .order_by(func.count(models.Upvote.id).desc())
         )
 
-    if sort == "latest":
+    if sort == "newest":
         query = query.order_by(desc(models.Suggestion.id))
     elif sort == "oldest":
         query = query.order_by(asc(models.Suggestion.id))

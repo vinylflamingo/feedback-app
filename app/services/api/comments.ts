@@ -1,19 +1,29 @@
 import { apiClient, handleErrors, prepareData } from '.';
+import type { AxiosResponse } from 'axios';
 
 export const addComment = async (
   suggestionId: number,
   formData: Record<string, any>
-): Promise<void> => {
+): Promise<AxiosResponse> => {
   try {
+
+    if (formData.text == "") {
+      throw Error("Comment cannot be empty.")
+    }
+
     const data = prepareData(formData, 'application/json');
-    await apiClient.post(`/suggestions/${suggestionId}/comments`, data, {
+    console.log(data)
+    console.log(suggestionId)
+
+    const response = await apiClient.post(`/suggestions/${suggestionId}/comments`, data, {
       headers: {
         'Content-Type': 'application/json'
       }
     });
+    return response;
   } catch (error: any) {
     handleErrors(error);
-    throw new Error('Failed to add comment');
+    throw error;
   }
 };
 
@@ -34,3 +44,4 @@ export const addChildComment = async (
     throw new Error('Failed to add child comment');
   }
 };
+ 

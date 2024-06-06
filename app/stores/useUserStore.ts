@@ -37,7 +37,6 @@ export const useUserStore = defineStore('user', () => {
         });
 
         if (data) {
-            console.log("USER STORE REFRESH: ",data)
             user.id = data.value?.id || NaN,
             user.username = data.value?.username || '',
             user.profilePicture = data.value?.profilePicture || '',

@@ -72,6 +72,7 @@ export enum ButtonColor {
 export enum ButtonWidth {
   FIT = "w-fit", 
   FULL = "w-full",
+  SMALLER = 'w-[119px]',
   SMALL = 'w-[134px]',
   LARGE = 'w-[279px]'
 }

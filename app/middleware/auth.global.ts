@@ -5,7 +5,7 @@ import { useAuthStore } from '~/stores/useAuthStore'
 import { useRuntimeConfig } from '#imports'
 import api from '~/services/api'
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
 
   if (to.path === '/login') {
     return
@@ -41,8 +41,10 @@ export default defineNuxtRouteMiddleware((to, from) => {
     }
     
     if (minutesUntilRefresh <= 0) {
-      api.refreshAuthToken();
-    }
+        if(await api.refreshAuthToken() === false) {
+          return navigateTo('/login');
+        }
+      }
     
     if (to.path === '/'){
       return navigateTo('dashboard')

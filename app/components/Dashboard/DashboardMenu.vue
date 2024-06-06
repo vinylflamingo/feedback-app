@@ -118,7 +118,6 @@ const updateSort = (option: SortOption) => {
 }
 
 const updateCategory = (category: SortOption) => {
-    console.log("emitting up to dashboard.vue")
     emit('update-category', category);
     menuState();
 }

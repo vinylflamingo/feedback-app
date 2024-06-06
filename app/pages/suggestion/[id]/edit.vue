@@ -8,6 +8,7 @@
     <Base :apiCall="formApiCall" formId="base-form" :suggestionId="id">
       <EditSuggestions v-if="suggestion" :suggestion="suggestion"/>
       <LoadingSvg v-else/>
+      <Button :isFormButton=true  text="Update Feedback" :color=ButtonColor.PURPLE :width=ButtonWidth.SMALL /> 
     </Base>
   </div>
 </template>
@@ -22,6 +23,10 @@ import { SuggestionApi } from '@/constants/enums';
 import EditSuggestions from '~/components/Form/EditSuggestions.vue';
 import type { Suggestion } from '~/types';
 import Homelink from '~/components/Elements/Interactive/Homelink.vue';
+import Button from '~/components/Elements/Interactive/Button.vue';
+import { ButtonColor, ButtonWidth } from '@/constants/enums';
+
+
 
 const route = useRoute();
 const router = useRouter();

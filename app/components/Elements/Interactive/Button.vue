@@ -1,5 +1,13 @@
 <template>
-    <NuxtLink :to="props.to">
+    <button v-if="isFormButton" 
+      type="submit" 
+      :class="styling" 
+      @mouseover="onHover" 
+      @mouseleave="onLeave"
+      >
+      {{ props.text }}
+    </button> 
+    <NuxtLink v-else :to="props.to" >
         <div :class="styling" @mouseover="onHover" @mouseleave="onLeave">
           {{ props.text }}
         </div>
@@ -14,12 +22,13 @@
     color: ButtonColor;
     width: ButtonWidth;
     text: string;
-    to: string;
+    to?: string;
+    isFormButton?: boolean;
   }
   
   const props = defineProps<ButtonProps>();
   
-  const baseClass = `cursor-pointer h-10 px-2 text-[#F2F4FE] text-[13px] flex items-center justify-center rounded-xl font-semibold ${props.width}`;
+  const baseClass = `transition cursor-pointer h-10 px-2 text-[#F2F4FE] text-[13px] flex items-center justify-center rounded-xl font-semibold ${props.width}`;
   const initialColorClass = props.color;
   const hoverColorClass = `${props.color}-light`; // Adjust this to your actual hover color class
   

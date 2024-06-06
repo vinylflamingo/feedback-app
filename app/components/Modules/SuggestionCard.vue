@@ -1,9 +1,9 @@
 <template>
-    <div class="mt-4 w-[327px] h-[200px] py-5 px-6 bg-white flex flex-col rounded-[10px] drop-shadow-sm cursor-pointer"
+    <div class="group mt-4 w-[327px] h-[200px] py-5 px-6 bg-white flex flex-col rounded-[10px] drop-shadow-sm cursor-pointer"
          @click="goToDetailPage">
         <div class="grid grid-cols-2 grid-rows-4 h-full w-full text-[13px] font-jost">
-            <div class="order-1 h-full flex flex-col align-top text-left col-span-2 row-span-4 items-start mb-3">
-                <h3 class="font-bold text-darkerBlue pb-[10px]">{{ props.suggestion.title }}</h3>
+            <div class="order-1 h-full flex flex-col align-top text-left col-span-2 row-span-4 items-start mb-4">
+                <h3 class="transition group-hover:text-blue font-bold text-darkerBlue pb-[10px]">{{ props.suggestion.title }}</h3>
                 <p class="leading-relaxed text-greyBlue tracking-tight font-regular">
                     {{ props.suggestion.detail }}
                 </p>
@@ -36,7 +36,6 @@ import CategoryBubble from '../Elements/Interactive/CategoryBubble.vue';
 import { UpvoteApi } from '~/constants/enums';
 import { UPVOTE_API_CALLS } from '~/constants/api-calls';
 import { useUserStore } from '~/stores/useUserStore';
-import type { Axios, AxiosResponse } from 'axios';
 
 const props = defineProps<{ suggestion: Suggestion }>();
 const key = "card-" + props.suggestion.id;
@@ -44,14 +43,19 @@ const upvoteData = ref({ active: false });
 const arrowColor = ref('#4661E6');
 const userStore = useUserStore();
 
+if (props.suggestion.id == 150) {
+    console.log("card 150 setup. props:", props)
+    console.log("current user upvotes: ", userStore.getUpvotes)
+}
+
 if(userStore.getUpvotes.indexOf(props.suggestion.id) != -1) {
     upvoteData.value.active = true;
     arrowColor.value = "#fff";
 }
 
 const upvoteButtonClass = computed(() => [
-  'order-2 row-span-2 col-span-1 p-4 rounded-[10px] mt-2 w-16 h-8 flex justify-start-center items-center flex-row cursor-pointer',
-  upvoteData.value.active ? 'bg-blue text-white' : 'bg-lightBlue text-blue'
+  'order-2 row-span-2 col-span-1 p-4 rounded-[10px] mt-2 w-16 h-8 flex justify-start-center items-center flex-row cursor-pointer transition',
+  upvoteData.value.active ? 'bg-blue text-white' : 'bg-lightBlue text-blue hover:bg-[#CFD7FF]'
 ]);
 
 const toggleUpvote = async () => {

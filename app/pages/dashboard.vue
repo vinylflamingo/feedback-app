@@ -44,9 +44,6 @@
   }
   
   const fetchSuggestions = async (currentSkip: number, sortOption?: string, categoryOption?:string ): Promise<Suggestion[]> => {
-    console.log(currentSkip);
-    console.log(sortOption);
-    console.log(categoryOption);
     loading.value = true;
     // this line is just to test loading animations.
     //let sleepToAnimate: void = await new Promise(r => setTimeout(() => r(), Math.floor(Math.random() * 6000) + 1)); 
@@ -58,9 +55,7 @@
         ...(sortOption && { sort: sortOption }),
         ...(categoryOption && { category: categoryOption })
       }
-      console.log("parsm right before update:", params)
       const response: Suggestion[] = await SUGGESTION_API_CALLS[SuggestionApi.READ_SUGGESTIONS](params);
-      console.log(response)
       let mutated = response;
       if (response.length > currentParams.limit) {
         hasMore.value = true;
