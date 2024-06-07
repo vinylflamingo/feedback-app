@@ -90,8 +90,17 @@ jobs:
         run: |
           ssh-keyscan -H ${{ secrets.DIGITALOCEAN_HOST }} >> ~/.ssh/known_hosts
 
+      - name: Check if docker-compose.yml exists
+        id: check_docker_compose
+        run: |
+          if [ -f /opt/vinylflamingo-feedback-app/docker-compose.yml ]; then
+            echo "composeexists=true" >> $GITHUB_ENV
+          else
+            echo "composeexists=false" >> $GITHUB_ENV
+          fi
+
       - name: Cleanup old containers and volumes
-        if: steps.check_changes.outputs.changes == 'true'
+        if: steps.check_changes.outputs.changes == 'true' && env.composeexists == 'true'
         env:
           SSH_PRIVATE_KEY: ~/.ssh/id_rsa
         run: |
