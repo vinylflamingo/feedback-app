@@ -3,6 +3,7 @@ version: '3.8'
 services:
   api:
     image: ${DOCKER_USERNAME}/vinylflamingo-feeback-api:latest
+    build: !reset
     environment:
       - ENV=production
     volumes: !reset []
