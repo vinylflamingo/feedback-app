@@ -11,7 +11,6 @@ from src import crud, schemas, models, database
 from src.database import get_db
 from dotenv import load_dotenv
 
-
 load_dotenv()  # Load environment variables from .env file
 
 SECRET_KEY = os.getenv("SECRET_KEY")
