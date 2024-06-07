@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   api:
     image: ${DOCKER_USERNAME}/vinylflamingo-feedback-api:latest
@@ -8,9 +6,10 @@ services:
       - ENV=production
     volumes: !reset []
     networks:
-      - pink-flamingo_pinkproxy
+      - pinkproxy
     env_file:
       - .env
 networks:
   pink-flamingo_pinkproxy:
     external: true
+

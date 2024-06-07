@@ -36,7 +36,6 @@ services:
 
 networks:
   default:
-    name: Feedback
     driver: bridge
 
 
