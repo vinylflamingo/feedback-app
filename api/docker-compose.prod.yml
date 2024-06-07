@@ -8,9 +8,9 @@ services:
       - ENV=production
     volumes: !reset []
     networks:
-      - pinkproxy
+      - pink-flamingo_pinkproxy
     env_file:
       - .env
 networks:
-  pinkproxy:
+  pink-flamingo_pinkproxy:
     external: true
