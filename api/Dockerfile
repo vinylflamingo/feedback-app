@@ -32,12 +32,12 @@ WORKDIR /app
 
 # Development stage (default)
 FROM base AS development
-EXPOSE 8000
-CMD ["poetry", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+EXPOSE 8123
+CMD ["poetry", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8123", "--reload"]
 
 # Production stage
 FROM base AS production
-CMD ["poetry", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["poetry", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8123"]
 
 # Default stage to be built if no target is specified
 FROM development AS default
