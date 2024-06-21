@@ -44,9 +44,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 if SEED_DATA == "True":
     seed_data()
 
-app = FastAPI()
-if not DEV_MODE:
-    app.docs_url = None
+app = FastAPI(docs_url=None)
 
 origins = [
     "http://localhost:3000",
